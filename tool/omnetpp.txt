@@ -1,0 +1,7 @@
+
+
+
+-u Cmdenv --cmdenv-express-mode=false --print-undisposed=false
+
+
+-u Cmdenv -f omnetpp.ini -c Tictoc1 
