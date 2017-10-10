@@ -23,14 +23,15 @@ class Application {
 		this.network = network;
         var width = this.canvas.width;
         var height = this.canvas.height;
-
+		
         var row_height = height / (network.maprect.top - network.maprect.bottom);
         var col_width = width / (network.maprect.right - network.maprect.left);
 		this.scale = row_height < col_width ? row_height : col_width;
 		this.node_size = this.scale / 10;
 		this.lineWidth = this.scale / 30;
         var ctx = this.canvas.getContext('2d');
-		ctx.translate(0, height);
+		ctx.translate(-network.maprect.left * this.scale, network.maprect.top * this.scale);
+		// ctx.translate(0, height)
 		ctx.scale(1, -1);
 		// draw node
         for(var i = 0; i < network.nodes.length; i++) {
