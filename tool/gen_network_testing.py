@@ -22,9 +22,15 @@ class Graph():
 					continue
 				else:
 					neibNode = self.nodes[j]
-					if (((curNode.x - neibNode.x)**2 + (curNode.y - neibNode.y)**2) < r*r):
+					if (((curNode.x - neibNode.x)**2 + (curNode.y - neibNode.y)**2) <= r*r):
 						self.nodes[i].neighbor.append(j)
 		return
+		
+	def hasNode(self, cNode):
+		for node in self.nodes:
+			if (node.x == cNode.x & node.y == cNode.y):
+				return True
+		return False
 		
 def gen_neighbor(curNode, r, b):
 	x = random.randrange(r)
@@ -49,10 +55,14 @@ def gen_coordinates(num, r):
 	curNode = Coord(random.randrange(num), random.randrange(num))
 	graph.nodes.append(curNode)
 	b = 2 * r * int(math.sqrt(num))
-	for i in xrange(1, num):
+	num -= 1
+	while(num):
 		newNode = gen_neighbor(curNode, r, Coord(b, b))
+		if (graph.hasNode(newNode)):
+			continue
 		graph.nodes.append(newNode)
 		curNode = newNode
+		num -= 1
 	return graph
 		
 def to_omnetpp_ini(graph, num, r):
@@ -96,10 +106,10 @@ def to_js_json(graph, num, r):
 	node_str += '\t],\n'
 	js_str = 'networkInfo = {\n'
 	js_str += '\tmaprect: {\n'
-	js_str += '\t\ttop: {},\n'.format(maxY)
-	js_str += '\t\tleft: {},\n'.format(minX)
-	js_str += '\t\tbottom: {},\n'.format(minY)
-	js_str += '\t\tright: {},\n'.format(maxX)
+	js_str += '\t\ttop: {},\n'.format(maxY+1)
+	js_str += '\t\tleft: {},\n'.format(minX-1)
+	js_str += '\t\tbottom: {},\n'.format(minY-1)
+	js_str += '\t\tright: {},\n'.format(maxX+1)
 	js_str += '\t},\n'
 	js_str += node_str + '}'
 	open('omnetpp.js', 'wb').write(js_str)

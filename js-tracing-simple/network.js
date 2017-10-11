@@ -55,6 +55,18 @@ class Application {
 			ctx.strokeStyle="#555";
 			ctx.stroke();
 		}
+        for(var i = 0; i < network.nodes.length; i++) {
+			var node = network.nodes[i];
+			ctx.save();
+			ctx.translate(node.coord.x * this.scale, node.coord.y * this.scale - this.node_size - 1);
+			ctx.rotate(Math.PI);
+			ctx.scale(-1, 1);
+			ctx.fillStyle = "black";
+			ctx.font = "20px Arial";
+			ctx.fillText(node.address.toString(), 0, 0);
+			ctx.stroke();
+			ctx.restore();
+		}
     }
 
 	path_animation(x, y) {
