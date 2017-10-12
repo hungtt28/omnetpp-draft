@@ -10,6 +10,8 @@ class Application {
 		this.lineWidth = 0;
 		this.node_size = 0;
 		this.network = null;
+		this.pointer_size = 10;
+		this.corner = {x: 0, y: 0};
     }
     
     load_app() {
@@ -29,8 +31,14 @@ class Application {
 		this.scale = row_height < col_width ? row_height : col_width;
 		this.node_size = this.scale / 10;
 		this.lineWidth = this.scale / 30;
+		// this.pointer_size = this.scale / 15;
+		// this.pointer.style.width = (this.pointer_size).toString()+"px";
+		// this.pointer.style.height = (this.pointer_size).toString()+"px";
+		
         var ctx = this.canvas.getContext('2d');
-		ctx.translate(-network.maprect.left * this.scale, network.maprect.top * this.scale);
+		this.corner.x = network.maprect.left * this.scale;
+		this.corner.y = network.maprect.top * this.scale
+		ctx.translate(-this.corner.x, this.corner.y);
 		// ctx.translate(0, height)
 		ctx.scale(1, -1);
 		// draw node
@@ -73,7 +81,7 @@ class Application {
 		var ctx = this.canvas.getContext('2d');
 		ctx.lineTo(x, y);
 		ctx.stroke();
-		this.pointer.style.transform = 'translate('+x+'px, '+(this.canvas.height - y)+'px)';
+		this.pointer.style.transform = 'translate('+(x - this.corner.x)+'px, '+(this.corner.y - y)+'px)';
         return new Promise(resolve => {
             setTimeout(function() {
                 resolve();
@@ -102,7 +110,7 @@ class Application {
 			await this.path_animation(curX + i * stepX, curY + i * stepY);
 		await this.path_animation(nextX, nextY);
         
-        this.pointer.style.transform = 'translate('+nextX+'px, '+(this.canvas.height - nextY)+'px)';
+        this.pointer.style.transform = 'translate('+(nextX - this.corner.x)+'px, '+(this.corner.y - nextY)+'px)';
         return new Promise(resolve => {
             setTimeout(function() {
                 resolve();

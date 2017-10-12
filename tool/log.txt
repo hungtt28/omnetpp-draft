@@ -1,0 +1,210 @@
+OMNeT++ Discrete Event Simulation  (C) 1992-2017 Andras Varga, OpenSim Ltd.
+Version: 5.1.1, build: 170508-adbabd0, edition: Academic Public License -- NOT FOR COMMERCIAL USE
+See the license for distribution terms and warranty disclaimer
+
+Setting up Cmdenv...
+
+Loading NED files from .:  1
+
+Preparing for running configuration General, run #0...
+Assigned runID=General-0-20171011-19:10:35-1292
+Setting up network "Testing"...
+Initializing...
+Initializing module Testing, stage 0
+Initializing module Testing.node[0], stage 0
+Initializing module Testing.node[1], stage 0
+Initializing module Testing.node[2], stage 0
+Initializing module Testing.node[3], stage 0
+Initializing module Testing.node[4], stage 0
+Initializing module Testing.node[5], stage 0
+Initializing module Testing.node[6], stage 0
+Initializing module Testing.node[7], stage 0
+Initializing module Testing.node[8], stage 0
+Initializing module Testing.node[9], stage 0
+Initializing module Testing.node[10], stage 0
+Initializing module Testing.node[11], stage 0
+Initializing module Testing.node[12], stage 0
+Initializing module Testing.node[13], stage 0
+Initializing module Testing.node[14], stage 0
+Initializing module Testing.node[15], stage 0
+Initializing module Testing.node[16], stage 0
+Initializing module Testing.node[17], stage 0
+Initializing module Testing.node[18], stage 0
+Initializing module Testing.node[19], stage 0
+Initializing module Testing.node[20], stage 0
+Initializing module Testing.node[21], stage 0
+Initializing module Testing.node[22], stage 0
+Initializing module Testing.node[23], stage 0
+Initializing module Testing.node[24], stage 0
+Initializing module Testing.node[25], stage 0
+Initializing module Testing.node[26], stage 0
+Initializing module Testing.node[27], stage 0
+Initializing module Testing.node[28], stage 0
+Initializing module Testing.node[29], stage 0
+Initializing module Testing.node[30], stage 0
+Initializing module Testing.node[31], stage 0
+Initializing module Testing.node[32], stage 0
+Initializing module Testing.node[33], stage 0
+Initializing module Testing.node[34], stage 0
+Initializing module Testing.node[35], stage 0
+Initializing module Testing.node[36], stage 0
+Initializing module Testing.node[37], stage 0
+Initializing module Testing.node[38], stage 0
+Initializing module Testing.node[39], stage 0
+Initializing module Testing.node[40], stage 0
+Initializing module Testing.node[41], stage 0
+Initializing module Testing.node[42], stage 0
+Initializing module Testing.node[43], stage 0
+Initializing module Testing.node[44], stage 0
+Initializing module Testing.node[45], stage 0
+Initializing module Testing.node[46], stage 0
+Initializing module Testing.node[47], stage 0
+Initializing module Testing.node[48], stage 0
+Initializing module Testing.node[49], stage 0
+Initializing module Testing.node[50], stage 0
+Initializing module Testing.node[51], stage 0
+Initializing module Testing.node[52], stage 0
+Initializing module Testing.node[53], stage 0
+Initializing module Testing.node[54], stage 0
+Initializing module Testing.node[55], stage 0
+Initializing module Testing.node[56], stage 0
+Initializing module Testing.node[57], stage 0
+Initializing module Testing.node[58], stage 0
+Initializing module Testing.node[59], stage 0
+Initializing module Testing.node[60], stage 0
+Initializing module Testing.node[61], stage 0
+Initializing module Testing.node[62], stage 0
+Initializing module Testing.node[63], stage 0
+Initializing module Testing.node[64], stage 0
+Initializing module Testing.node[65], stage 0
+Initializing module Testing.node[66], stage 0
+Initializing module Testing.node[67], stage 0
+Initializing module Testing.node[68], stage 0
+Initializing module Testing.node[69], stage 0
+Initializing module Testing.node[70], stage 0
+Initializing module Testing.node[71], stage 0
+Initializing module Testing.node[72], stage 0
+Initializing module Testing.node[73], stage 0
+Initializing module Testing.node[74], stage 0
+Initializing module Testing.node[75], stage 0
+Initializing module Testing.node[76], stage 0
+Initializing module Testing.node[77], stage 0
+Initializing module Testing.node[78], stage 0
+Initializing module Testing.node[79], stage 0
+Initializing module Testing.node[80], stage 0
+Initializing module Testing.node[81], stage 0
+Initializing module Testing.node[82], stage 0
+Initializing module Testing.node[83], stage 0
+Initializing module Testing.node[84], stage 0
+Initializing module Testing.node[85], stage 0
+Initializing module Testing.node[86], stage 0
+Initializing module Testing.node[87], stage 0
+Initializing module Testing.node[88], stage 0
+Initializing module Testing.node[89], stage 0
+Initializing module Testing.node[90], stage 0
+Initializing module Testing.node[91], stage 0
+Initializing module Testing.node[92], stage 0
+Initializing module Testing.node[93], stage 0
+Initializing module Testing.node[94], stage 0
+Initializing module Testing.node[95], stage 0
+Initializing module Testing.node[96], stage 0
+Initializing module Testing.node[97], stage 0
+Initializing module Testing.node[98], stage 0
+Initializing module Testing.node[99], stage 0
+
+Running simulation...
+** Event #1  t=0   Testing.node[0] (Test1, id=2)
+** Event #2  t=0   Testing.node[1] (Test1, id=3)
+** Event #3  t=0   Testing.node[2] (Test1, id=4)
+** Event #4  t=0   Testing.node[4] (Test1, id=6)
+** Event #5  t=0   Testing.node[6] (Test1, id=8)
+** Event #6  t=0   Testing.node[7] (Test1, id=9)
+** Event #7  t=0   Testing.node[8] (Test1, id=10)
+** Event #8  t=0   Testing.node[9] (Test1, id=11)
+** Event #9  t=0   Testing.node[10] (Test1, id=12)
+** Event #10  t=0   Testing.node[11] (Test1, id=13)
+** Event #11  t=0   Testing.node[15] (Test1, id=17)
+** Event #12  t=0   Testing.node[17] (Test1, id=19)
+** Event #13  t=0   Testing.node[19] (Test1, id=21)
+** Event #14  t=0   Testing.node[21] (Test1, id=23)
+** Event #15  t=0   Testing.node[22] (Test1, id=24)
+** Event #16  t=0   Testing.node[23] (Test1, id=25)
+** Event #17  t=0   Testing.node[24] (Test1, id=26)
+** Event #18  t=0   Testing.node[26] (Test1, id=28)
+** Event #19  t=0   Testing.node[25] (Test1, id=27)
+** Event #20  t=0   Testing.node[24] (Test1, id=26)
+** Event #21  t=0   Testing.node[23] (Test1, id=25)
+** Event #22  t=0   Testing.node[22] (Test1, id=24)
+** Event #23  t=0   Testing.node[21] (Test1, id=23)
+** Event #24  t=0   Testing.node[20] (Test1, id=22)
+** Event #25  t=0   Testing.node[16] (Test1, id=18)
+** Event #26  t=0   Testing.node[15] (Test1, id=17)
+** Event #27  t=0   Testing.node[11] (Test1, id=13)
+** Event #28  t=0   Testing.node[10] (Test1, id=12)
+** Event #29  t=0   Testing.node[9] (Test1, id=11)
+** Event #30  t=0   Testing.node[8] (Test1, id=10)
+** Event #31  t=0   Testing.node[7] (Test1, id=9)
+** Event #32  t=0   Testing.node[6] (Test1, id=8)
+** Event #33  t=0   Testing.node[5] (Test1, id=7)
+** Event #34  t=0   Testing.node[4] (Test1, id=6)
+** Event #35  t=0   Testing.node[3] (Test1, id=5)
+** Event #36  t=0   Testing.node[2] (Test1, id=4)
+** Event #37  t=0   Testing.node[1] (Test1, id=3)
+** Event #38  t=0   Testing.node[0] (Test1, id=2)
+** Event #39  t=0   Testing.node[1] (Test1, id=3)
+** Event #40  t=0   Testing.node[2] (Test1, id=4)
+** Event #41  t=0   Testing.node[3] (Test1, id=5)
+** Event #42  t=0   Testing.node[4] (Test1, id=6)
+** Event #43  t=0   Testing.node[5] (Test1, id=7)
+** Event #44  t=0   Testing.node[6] (Test1, id=8)
+** Event #45  t=0   Testing.node[7] (Test1, id=9)
+** Event #46  t=0   Testing.node[8] (Test1, id=10)
+** Event #47  t=0   Testing.node[9] (Test1, id=11)
+** Event #48  t=0   Testing.node[10] (Test1, id=12)
+** Event #49  t=0   Testing.node[11] (Test1, id=13)
+** Event #50  t=0   Testing.node[13] (Test1, id=15)
+** Event #51  t=0   Testing.node[14] (Test1, id=16)
+** Event #52  t=0   Testing.node[12] (Test1, id=14)
+** Event #53  t=0   Testing.node[15] (Test1, id=17)
+** Event #54  t=0   Testing.node[18] (Test1, id=20)
+** Event #55  t=0   Testing.node[17] (Test1, id=19)
+** Event #56  t=0   Testing.node[19] (Test1, id=21)
+** Event #57  t=0   Testing.node[21] (Test1, id=23)
+** Event #58  t=0   Testing.node[22] (Test1, id=24)
+** Event #59  t=0   Testing.node[23] (Test1, id=25)
+** Event #60  t=0   Testing.node[27] (Test1, id=29)
+** Event #61  t=0   Testing.node[28] (Test1, id=30)
+** Event #62  t=0   Testing.node[60] (Test1, id=62)
+** Event #63  t=0   Testing.node[59] (Test1, id=61)
+** Event #64  t=0   Testing.node[54] (Test1, id=56)
+** Event #65  t=0   Testing.node[49] (Test1, id=51)
+** Event #66  t=0   Testing.node[56] (Test1, id=58)
+** Event #67  t=0   Testing.node[46] (Test1, id=48)
+** Event #68  t=0   Testing.node[51] (Test1, id=53)
+** Event #69  t=0   Testing.node[45] (Test1, id=47)
+** Event #70  t=0   Testing.node[47] (Test1, id=49)
+** Event #71  t=0   Testing.node[44] (Test1, id=46)
+** Event #72  t=0   Testing.node[64] (Test1, id=66)
+** Event #73  t=0   Testing.node[31] (Test1, id=33)
+** Event #74  t=0   Testing.node[70] (Test1, id=72)
+** Event #75  t=0   Testing.node[90] (Test1, id=92)
+** Event #76  t=0   Testing.node[74] (Test1, id=76)
+** Event #77  t=0   Testing.node[89] (Test1, id=91)
+** Event #78  t=0   Testing.node[71] (Test1, id=73)
+** Event #79  t=0   Testing.node[72] (Test1, id=74)
+** Event #80  t=0   Testing.node[76] (Test1, id=78)
+** Event #81  t=0   Testing.node[86] (Test1, id=88)
+** Event #82  t=0   Testing.node[85] (Test1, id=87)
+** Event #83  t=0   Testing.node[84] (Test1, id=86)
+** Event #84  t=0   Testing.node[81] (Test1, id=83)
+** Event #85  t=0   Testing.node[93] (Test1, id=95)
+** Event #86  t=0   Testing.node[80] (Test1, id=82)
+** Event #87  t=0   Testing.node[99] (Test1, id=101)
+[INFO]	Complete.
+
+<!> No more events, simulation completed -- at t=0s, event #87
+
+Calling finish() at end of Run #0...
+undisposed object: (GPSR) Testing.node. -- check module destructor
+
+End.
