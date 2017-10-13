@@ -36,6 +36,7 @@
  *     double Lfy = 0;
  *     int FirstSenderAddress = -1;   	// e0
  *     int FirstReceiverAddress = -1; 	// e0
+ *     int SenderAddress = -1;
  * }
  * </pre>
  */
@@ -51,6 +52,7 @@ class GPSR : public ::omnetpp::cMessage
     double Lfy;
     int FirstSenderAddress;
     int FirstReceiverAddress;
+    int SenderAddress;
 
   private:
     void copy(const GPSR& other);
@@ -87,6 +89,8 @@ class GPSR : public ::omnetpp::cMessage
     virtual void setFirstSenderAddress(int FirstSenderAddress);
     virtual int getFirstReceiverAddress() const;
     virtual void setFirstReceiverAddress(int FirstReceiverAddress);
+    virtual int getSenderAddress() const;
+    virtual void setSenderAddress(int SenderAddress);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const GPSR& obj) {obj.parsimPack(b);}

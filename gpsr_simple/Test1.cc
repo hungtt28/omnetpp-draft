@@ -35,6 +35,7 @@ protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 	
+	Coord* getNeighborPosition(int neighborAddress);
 	int findNextHop(GPSR *msg);
 	int findGreedyRoutingNextHop(GPSR *msg);
 	int findPerimeterRoutingNextHop(GPSR *msg);
@@ -97,7 +98,7 @@ void Test1::handleMessage(cMessage *msg) {
 		else {
 			int iNext = -1;
 			for (int i = 0; i < this->gateSize("out"); i++) {
-				if (this->gate("out", i)->pathContains(this->getParentModule()->getSubmodule("node", neighbor.at(nextHop)), -1) == true) {
+				if (this->gate("out", i)->pathContains(this->getParentModule()->getSubmodule("node", nextHop), -1) == true) {
 					iNext = i;
 				}
 			}
@@ -107,6 +108,15 @@ void Test1::handleMessage(cMessage *msg) {
 				send(gpsrMsg, "out", iNext);
 		}
     }
+}
+
+Coord* Test1::getNeighborPosition(int neighborAddress) {
+	for (unsigned int i = 0; i < neighbor.size(); i++) {
+		if (neighborAddress == neighbor.at(i)) {
+			return neighbor_pos.at(i);
+		}
+	}
+	return new Coord(0, 0);
 }
 
 int Test1::findNextHop(GPSR *msg) {
@@ -129,7 +139,7 @@ int Test1::findGreedyRoutingNextHop(GPSR *msg) {
 		if (minDis >= distNeighborToDes) {
 			flag = true;
 			minDis = distNeighborToDes;
-			bestNeighbor = j;
+			bestNeighbor = neighbor.at(j);
 		}
 	}
 	// if perimeter
@@ -139,6 +149,7 @@ int Test1::findGreedyRoutingNextHop(GPSR *msg) {
 		msg->setLpy(curPos->y);
 		msg->setFirstSenderAddress(curId);
 		msg->setFirstReceiverAddress(-1);
+		msg->setSenderAddress(-1);
 		bestNeighbor = findPerimeterRoutingNextHop(msg);
 		// return -1;
 	}
@@ -147,11 +158,11 @@ int Test1::findGreedyRoutingNextHop(GPSR *msg) {
 
 int Test1::findPerimeterRoutingNextHop(GPSR *msg) {
 	Coord* desPos = new Coord(msg->getDx(), msg->getDy());
-	double minDis = curPos->distance(desPos);
-	Coord* startPos = new Coord(msg->getLpx(), msg->getLpy());
-	double startDis = startPos->distance(desPos);
+	double curDis = curPos->distance(desPos);
+	Coord* beginPerimeterPos = new Coord(msg->getLpx(), msg->getLpy());
+	double minDis = beginPerimeterPos->distance(desPos);
 	int bestNeighbor = -1;
-	if (minDis < startDis) {
+	if (curDis < minDis) {
 		msg->setMode(GPSR_GREEDY_ROUTING);
 		msg->setLpx(0);
 		msg->setLpy(0);
@@ -163,15 +174,16 @@ int Test1::findPerimeterRoutingNextHop(GPSR *msg) {
         int firstSender = msg->getFirstSenderAddress();
         int firstReceiver = msg->getFirstReceiverAddress();
         bool hasIntersection;
+		bestNeighbor = msg->getSenderAddress();
         do {
             if (bestNeighbor == -1)
                 bestNeighbor = getNextPlanarNeighborCounterClockwise(bestNeighbor, getNeighborAngle(desPos));
             else
-                bestNeighbor = getNextPlanarNeighborCounterClockwise(bestNeighbor, getNeighborAngle(neighbor_pos.at(bestNeighbor)));
+                bestNeighbor = getNextPlanarNeighborCounterClockwise(bestNeighbor, getNeighborAngle(getNeighborPosition(bestNeighbor)));
             if (bestNeighbor == -1)
                 break;
-            Coord* bestNeighborPos = neighbor_pos.at(bestNeighbor);
-            hasIntersection = intersectSections(startPos, desPos, curPos, bestNeighborPos);
+            Coord* bestNeighborPos = getNeighborPosition(bestNeighbor);
+            hasIntersection = intersectSections(beginPerimeterPos, desPos, curPos, bestNeighborPos);
             if (hasIntersection) {
                 msg->setFirstSenderAddress(curId);
                 msg->setFirstReceiverAddress(-1);
@@ -185,6 +197,7 @@ int Test1::findPerimeterRoutingNextHop(GPSR *msg) {
                 msg->setFirstReceiverAddress(bestNeighbor);
         }
 	}
+	msg->setSenderAddress(curId);
 	return bestNeighbor;
 }
 
@@ -234,7 +247,7 @@ std::vector<int> Test1::getPlanarNeighbors()
 		}
         else
             throw cRuntimeError("Unknown planarization mode");
-        planarNeighbors.push_back(i);
+        planarNeighbors.push_back(neighbor.at(i));
       eliminate:;
     }
 	return planarNeighbors;
@@ -245,15 +258,15 @@ int Test1::getNextPlanarNeighborCounterClockwise(const int startNeighborAddress,
     int bestNeighbor = startNeighborAddress;
     double bestNeighborAngleDifference = 2 * M_PI;
     std::vector<int> planarNeighbors = getPlanarNeighbors();
-    for (auto & neighborIndex : planarNeighbors) {
-		Coord *neighborPos = neighbor_pos.at(neighborIndex);
+    for (auto & neighborAddress : planarNeighbors) {
+		Coord *neighborPos = getNeighborPosition(neighborAddress);
         double neighborAngle = getNeighborAngle(neighborPos);
         double neighborAngleDifference = neighborAngle - startNeighborAngle;
         if (neighborAngleDifference < 0)
             neighborAngleDifference += 2 * M_PI;
         if (neighborAngleDifference != 0 && neighborAngleDifference < bestNeighborAngleDifference) {
             bestNeighborAngleDifference = neighborAngleDifference;
-            bestNeighbor = neighborIndex;
+            bestNeighbor = neighborAddress;
         }
     }
     return bestNeighbor;

@@ -190,6 +190,7 @@ GPSR::GPSR(const char *name, short kind) : ::omnetpp::cMessage(name,kind)
     this->Lfy = 0;
     this->FirstSenderAddress = -1;
     this->FirstReceiverAddress = -1;
+    this->SenderAddress = -1;
 }
 
 GPSR::GPSR(const GPSR& other) : ::omnetpp::cMessage(other)
@@ -220,6 +221,7 @@ void GPSR::copy(const GPSR& other)
     this->Lfy = other.Lfy;
     this->FirstSenderAddress = other.FirstSenderAddress;
     this->FirstReceiverAddress = other.FirstReceiverAddress;
+    this->SenderAddress = other.SenderAddress;
 }
 
 void GPSR::parsimPack(omnetpp::cCommBuffer *b) const
@@ -234,6 +236,7 @@ void GPSR::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->Lfy);
     doParsimPacking(b,this->FirstSenderAddress);
     doParsimPacking(b,this->FirstReceiverAddress);
+    doParsimPacking(b,this->SenderAddress);
 }
 
 void GPSR::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -248,6 +251,7 @@ void GPSR::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->Lfy);
     doParsimUnpacking(b,this->FirstSenderAddress);
     doParsimUnpacking(b,this->FirstReceiverAddress);
+    doParsimUnpacking(b,this->SenderAddress);
 }
 
 int GPSR::getMode() const
@@ -340,6 +344,16 @@ void GPSR::setFirstReceiverAddress(int FirstReceiverAddress)
     this->FirstReceiverAddress = FirstReceiverAddress;
 }
 
+int GPSR::getSenderAddress() const
+{
+    return this->SenderAddress;
+}
+
+void GPSR::setSenderAddress(int SenderAddress)
+{
+    this->SenderAddress = SenderAddress;
+}
+
 class GPSRDescriptor : public omnetpp::cClassDescriptor
 {
   private:
@@ -405,7 +419,7 @@ const char *GPSRDescriptor::getProperty(const char *propertyname) const
 int GPSRDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 9+basedesc->getFieldCount() : 9;
+    return basedesc ? 10+basedesc->getFieldCount() : 10;
 }
 
 unsigned int GPSRDescriptor::getFieldTypeFlags(int field) const
@@ -426,8 +440,9 @@ unsigned int GPSRDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<9) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<10) ? fieldTypeFlags[field] : 0;
 }
 
 const char *GPSRDescriptor::getFieldName(int field) const
@@ -448,8 +463,9 @@ const char *GPSRDescriptor::getFieldName(int field) const
         "Lfy",
         "FirstSenderAddress",
         "FirstReceiverAddress",
+        "SenderAddress",
     };
-    return (field>=0 && field<9) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<10) ? fieldNames[field] : nullptr;
 }
 
 int GPSRDescriptor::findField(const char *fieldName) const
@@ -465,6 +481,7 @@ int GPSRDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='L' && strcmp(fieldName, "Lfy")==0) return base+6;
     if (fieldName[0]=='F' && strcmp(fieldName, "FirstSenderAddress")==0) return base+7;
     if (fieldName[0]=='F' && strcmp(fieldName, "FirstReceiverAddress")==0) return base+8;
+    if (fieldName[0]=='S' && strcmp(fieldName, "SenderAddress")==0) return base+9;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -486,8 +503,9 @@ const char *GPSRDescriptor::getFieldTypeString(int field) const
         "double",
         "int",
         "int",
+        "int",
     };
-    return (field>=0 && field<9) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<10) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **GPSRDescriptor::getFieldPropertyNames(int field) const
@@ -563,6 +581,7 @@ std::string GPSRDescriptor::getFieldValueAsString(void *object, int field, int i
         case 6: return double2string(pp->getLfy());
         case 7: return long2string(pp->getFirstSenderAddress());
         case 8: return long2string(pp->getFirstReceiverAddress());
+        case 9: return long2string(pp->getSenderAddress());
         default: return "";
     }
 }
@@ -586,6 +605,7 @@ bool GPSRDescriptor::setFieldValueAsString(void *object, int field, int i, const
         case 6: pp->setLfy(string2double(value)); return true;
         case 7: pp->setFirstSenderAddress(string2long(value)); return true;
         case 8: pp->setFirstReceiverAddress(string2long(value)); return true;
+        case 9: pp->setSenderAddress(string2long(value)); return true;
         default: return false;
     }
 }

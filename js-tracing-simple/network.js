@@ -1,4 +1,4 @@
-class Application {
+class Emulator {
 
     constructor(canvas_id, pointer_id, target_id) {
         this.canvas_id = canvas_id;
@@ -12,6 +12,7 @@ class Application {
 		this.network = null;
 		this.pointer_size = 10;
 		this.corner = {x: 0, y: 0};
+		this.load_app();
     }
     
     load_app() {
@@ -21,13 +22,16 @@ class Application {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    draw_networkMap(network) {
+	init(network) {
 		this.network = network;
+	}
+	
+    draw_networkMap() {
         var width = this.canvas.width;
         var height = this.canvas.height;
 		
-        var row_height = height / (network.maprect.top - network.maprect.bottom);
-        var col_width = width / (network.maprect.right - network.maprect.left);
+        var row_height = height / (this.network.maprect.top - this.network.maprect.bottom);
+        var col_width = width / (this.network.maprect.right - this.network.maprect.left);
 		this.scale = row_height < col_width ? row_height : col_width;
 		this.node_size = this.scale / 10;
 		this.lineWidth = this.scale / 30;
@@ -36,14 +40,14 @@ class Application {
 		// this.pointer.style.height = (this.pointer_size).toString()+"px";
 		
         var ctx = this.canvas.getContext('2d');
-		this.corner.x = network.maprect.left * this.scale;
-		this.corner.y = network.maprect.top * this.scale
+		this.corner.x = this.network.maprect.left * this.scale;
+		this.corner.y = this.network.maprect.top * this.scale
 		ctx.translate(-this.corner.x, this.corner.y);
 		// ctx.translate(0, height)
 		ctx.scale(1, -1);
 		// draw node
-        for(var i = 0; i < network.nodes.length; i++) {
-			var node = network.nodes[i];
+        for(var i = 0; i < this.network.nodes.length; i++) {
+			var node = this.network.nodes[i];
 			ctx.beginPath();
 			ctx.arc(node.coord.x * this.scale, node.coord.y * this.scale, this.node_size, 0, 2*Math.PI);
 			ctx.strokeStyle="green";
@@ -52,10 +56,10 @@ class Application {
 			ctx.stroke();
         }
 		// draw connection
-		for (var i = 0; i < network.connection.length; i++) {
-			var connection = network.connection[i];
-			var src = network.getNode(connection.src);
-			var des = network.getNode(connection.des);
+		for (var i = 0; i < this.network.connection.length; i++) {
+			var connection = this.network.connection[i];
+			var src = this.network.getNode(connection.src);
+			var des = this.network.getNode(connection.des);
 			ctx.beginPath();
 			ctx.lineWidth = this.lineWidth;
 			ctx.moveTo(src.coord.x * this.scale, src.coord.y * this.scale);
@@ -63,8 +67,8 @@ class Application {
 			ctx.strokeStyle="#555";
 			ctx.stroke();
 		}
-        for(var i = 0; i < network.nodes.length; i++) {
-			var node = network.nodes[i];
+        for(var i = 0; i < this.network.nodes.length; i++) {
+			var node = this.network.nodes[i];
 			ctx.save();
 			ctx.translate(node.coord.x * this.scale, node.coord.y * this.scale - this.node_size - 1);
 			ctx.rotate(Math.PI);
@@ -132,28 +136,57 @@ class Application {
 			await this.draw_path(path[i], path[i+1]);
 	}
 	
-    begin() {
+	route(node, packet) {
+		var curNode = this.network.getNode(node);
+		return this.network.routing.findNextHop(curNode, packet);
+	}
+	
+    async routing_trace(src, des) {
+		var curHop = src;
+		var nextHop = -1;
+		var srcNode = this.network.getNode(src);
+		
+        var x = (srcNode.coord.x) * this.scale;
+        var y = (srcNode.coord.y) * this.scale;
         var ctx = this.canvas.getContext('2d');
-        ctx.beginPath();
-    }
-
-    finish() {
-        var ctx = this.canvas.getContext('2d');
-        ctx.stroke();
-    } 
+		ctx.beginPath();
+		ctx.strokeStyle = '#ff0000';
+		ctx.moveTo(x, y);
+		ctx.stroke();
+		
+		var packet = this.network.routing.createPacket(des);
+		while(1) {
+			if (curHop == des)
+				break;
+			nextHop = this.route(curHop, packet)
+			if (nextHop == -1)
+				break;
+			await this.draw_path(curHop, nextHop);
+			curHop = nextHop;
+		}
+	}
 }
 
-class Coordinate {
+class Coord {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	distanceTo(coord) {
+		return Math.sqrt(Math.pow(this.x - coord.x, 2) + Math.pow(this.y - coord.y, 2))
+	}
+	
+	set(coord) {
+		this.x = coord.x;
+		this.y = coord.y;
 	}
 }
 
 class Node {
 	constructor(node) {
 		this.address = node.address;
-		this.coord = node.coord;
+		this.coord = new Coord(node.coord.x, node.coord.y);
 		this.range = node.range;
 		this.neighbor = node.neighbor;
 	}
@@ -175,6 +208,7 @@ class NetworkMap {
 		this.nodes = [];
 		this.maprect = {};
 		this.connection = [];
+		this.routing;
 		this.buildNetwork(networkJson);
 	}
 	
@@ -209,5 +243,9 @@ class NetworkMap {
 			if (this.nodes[i].address == address)
 				return this.nodes[i];
 		}
+	}
+	
+	setRouting(routing) {
+		this.routing = routing;
 	}
 }

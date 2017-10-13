@@ -28,4 +28,5 @@ message GPSR
 	double Lfy = 0;
     int FirstSenderAddress = -1;   	// e0
     int FirstReceiverAddress = -1; 	// e0
+	int SenderAddress = -1;
 }
