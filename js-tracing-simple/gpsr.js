@@ -34,8 +34,12 @@ class GPSR {
 		var nextHop = -1;
 		if (packet.mode == GPSR_GREEDY_ROUTING)
 			nextHop = this.findGreedyRoutingNextHop(node, packet)
-		else if (packet.mode == GPSR_PERIMETER_ROUTING)
-			nextHop = this.findPerimeterRoutingNextHop(node, packet)
+		else if (packet.mode == GPSR_PERIMETER_ROUTING) {
+			if (packet.startPerimeter.x == node.coord.x && packet.startPerimeter.y == node.coord.y)
+				nextHop = -1;
+			else
+				nextHop = this.findPerimeterRoutingNextHop(node, packet)
+		}
 		packet.senderAddress = node.address;
 		return nextHop;
 	}

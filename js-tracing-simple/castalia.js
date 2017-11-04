@@ -1,0 +1,31 @@
+
+networkInfo = {
+	maprect: {
+		top: 75,
+		left: 0, 
+		bottom: 0,
+		right: 75,
+	},
+	nodes: [
+		{address: 0, coord: {x: 51, y: 36}, range: 40, neighbor: []},
+		{address: 1, coord: {x: 9, y: 43}, range: 40, neighbor: []},
+		{address: 2, coord: {x: 11, y: 34}, range: 40, neighbor: []},
+		{address: 3, coord: {x: 14, y: 8}, range: 40, neighbor: []},
+		{address: 4, coord: {x: 61, y: 14}, range: 40, neighbor: []},
+		{address: 5, coord: {x: 24, y: 52}, range: 40, neighbor: []},
+		{address: 6, coord: {x: 15, y: 2}, range: 40, neighbor: []},
+		{address: 7, coord: {x: 1, y: 47}, range: 40, neighbor: []},
+		{address: 8, coord: {x: 46, y: 39}, range: 40, neighbor: []},
+		{address: 9, coord: {x: 4, y: 45}, range: 40, neighbor: []},
+		{address: 10, coord: {x: 70, y: 21}, range: 40, neighbor: []},
+		{address: 11, coord: {x: 6, y: 31}, range: 40, neighbor: []},
+		{address: 12, coord: {x: 20, y: 2}, range: 40, neighbor: []},
+		{address: 13, coord: {x: 48, y: 16}, range: 40, neighbor: []},
+		{address: 14, coord: {x: 39, y: 38}, range: 40, neighbor: []},
+		{address: 15, coord: {x: 52, y: 62}, range: 40, neighbor: []},
+		{address: 16, coord: {x: 66, y: 38}, range: 40, neighbor: []},
+		{address: 17, coord: {x: 45, y: 39}, range: 40, neighbor: []},
+		{address: 18, coord: {x: 40, y: 10}, range: 40, neighbor: []},
+		{address: 19, coord: {x: 69, y: 50}, range: 40, neighbor: []},
+	],
+}

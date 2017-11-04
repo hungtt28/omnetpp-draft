@@ -66,23 +66,22 @@ def gen_coordinates(num, r):
 	return graph
 		
 def to_omnetpp_ini(graph, num, r):
-	init_str = '[General]\nnetwork = Testing\n'
-	init_str += '**.n = {}\n'.format(num)
+	init_str = '[General]\nnetwork = Network\n'
+	init_str += '*.numHosts = {}\n'.format(num)
+	init_str += '*.range = {}\n'.format(r)
 	neighbor_str = ''
 	# graph = gen_coordinates(num, r)
 	# graph.updateNeighbor(r)
 	for i in range(num):
-		init_str += '*.node[{}].id = {}\n'.format(i, i)
-		init_str += '*.node[{}].x = {}\n'.format(i, graph.nodes[i].x)
-		init_str += '*.node[{}].y = {}\n'.format(i, graph.nodes[i].y)
-		neighbor_str += '*.node[{}].neighbor_str = "{}"\n'.format(i, ' '.join(str(id) for id in graph.nodes[i].neighbor))
-	# init_str += '*.node[*].xD = {}\n'.format(graph.nodes[-1].x)
-	# init_str += '*.node[*].yD = {}\n'.format(graph.nodes[-1].y)
-	init_str += '**.xD = {}\n'.format(graph.nodes[-1].x)
-	init_str += '**.yD = {}\n'.format(graph.nodes[-1].y)
-	init_str += '*.node[0].Source = true\n'
-	init_str += '*.node[{}].Dest = true\n'.format(num-1)
-	init_str += '**.range = {}\n'.format(r)
+		init_str += '*.host[{}].ID = {}\n'.format(i, i)
+		init_str += '*.host[{}].X = {}\n'.format(i, graph.nodes[i].x)
+		init_str += '*.host[{}].Y = {}\n'.format(i, graph.nodes[i].y)
+		neighbor_str += '*.host[{}].neighbor_str = "{}"\n'.format(i, ' '.join(str(id) for id in graph.nodes[i].neighbor))
+	init_str += '# data\n'
+	init_str += '*.host[0].isSource = true\n'
+	init_str += '*.host[0].destID = {}\n'.format(num-1)
+	init_str += '*.host[0].destX = {}\n'.format(graph.nodes[-1].x)
+	init_str += '*.host[0].destY = {}\n'.format(graph.nodes[-1].y)
 	init_str += '\n' + neighbor_str
 	open('omnetpp.ini', 'wb').write(init_str)
 	return 
@@ -115,16 +114,38 @@ def to_js_json(graph, num, r):
 	open('omnetpp.js', 'wb').write(js_str)
 	return
 	
+def to_castalia_format(graph, num, r):
+	node_str = '\n'
+	maxX, minX, maxY, minY = -1, -1, -1, -1
+	for i in range(num):
+		if (maxX < graph.nodes[i].x) | (maxX == -1):
+			maxX = graph.nodes[i].x
+		if (minX > graph.nodes[i].x) | (minX == -1):
+			minX = graph.nodes[i].x
+		if (maxY < graph.nodes[i].y) | (maxY == -1):
+			maxY = graph.nodes[i].y
+		if (minY > graph.nodes[i].y) | (minY == -1):
+			minY = graph.nodes[i].y
+		node_str += 'SN.node[{}].xCoor = {}\n'.format(i, graph.nodes[i].x)
+		node_str += 'SN.node[{}].yCoor = {}\n'.format(i, graph.nodes[i].y)
+		node_str += 'SN.node[{}].zCoor = {}\n\n'.format(i, 0)
+	node_str += '\n'
+	print('[+] maxX: {}'.format(maxX))
+	print('[+] maxY: {}'.format(maxY))
+	open('node_location.ini', 'wb').write(node_str)
+	return
+	
 def gen_network_testing(num, r):
 	graph = gen_coordinates(num, r)
 	graph.updateNeighbor(r)
 	to_omnetpp_ini(graph, num, r)
 	to_js_json(graph, num, r)
+	to_castalia_format(graph, num, r)
 	return
 	
 if __name__ == "__main__":
 	if (len(sys.argv) < 3):
-		print('python gen_network_testing.py <num> <t> <range>')
+		print('python gen_network_testing.py <num> <range>')
 		sys.exit(0)
 	num = int(sys.argv[1])
 	r = int(sys.argv[2])

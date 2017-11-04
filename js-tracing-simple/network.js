@@ -6,6 +6,7 @@ class Emulator {
         this.target_id = target_id;
         this.canvas = null;
         this.pointer = null;
+		this.target = null;
 		this.scale = 0;
 		this.lineWidth = 0;
 		this.node_size = 0;
@@ -18,6 +19,7 @@ class Emulator {
     load_app() {
         this.canvas = document.getElementById(this.canvas_id);
         this.pointer = document.getElementById(this.pointer_id);
+		this.target = document.getElementById(this.target_id);
         var ctx = this.canvas.getContext('2d');
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -154,6 +156,9 @@ class Emulator {
 		ctx.moveTo(x, y);
 		ctx.stroke();
 		
+		var desNode = this.network.getNode(des);
+		this.target.style.transform = 'translate('+(desNode.coord.x * this.scale - this.corner.x)+'px, '+(this.corner.y - desNode.coord.y * this.scale)+'px)';
+		
 		var packet = this.network.routing.createPacket(des);
 		while(1) {
 			if (curHop == des)
@@ -204,20 +209,19 @@ class Connection {
 }
 
 class NetworkMap {
-	constructor(networkJson) {
+	constructor(networkInfo) {
 		this.nodes = [];
 		this.maprect = {};
 		this.connection = [];
 		this.routing;
-		this.buildNetwork(networkJson);
+		this.buildNetwork(networkInfo);
 	}
 	
-	buildNetwork(networkJson) {
-		var info = JSON.parse(networkJson);
-		for (var i = 0; i < info.nodes.length; i++) {
-			this.nodes.push(new Node(info.nodes[i]));
+	buildNetwork(networkInfo) {
+		for (var i = 0; i < networkInfo.nodes.length; i++) {
+			this.nodes.push(new Node(networkInfo.nodes[i]));
 		}
-		this.maprect = info.maprect;
+		this.maprect = networkInfo.maprect;
 		this.updateConnection();
 	}
 	
@@ -247,5 +251,93 @@ class NetworkMap {
 	
 	setRouting(routing) {
 		this.routing = routing;
+	}
+}
+
+function ra(n) {
+	return Math.round(n * Math.random());
+}
+
+function getIndexOfMatrix(n, i, j) {
+	return i * n - ((i + 2) * (i + 1) / 2) + j;
+}
+
+function distance(curNode, targetNode) {
+	var dist = Math.sqrt(Math.pow(curNode.coord.x - targetNode.coord.x, 2) + Math.pow(curNode.coord.y - targetNode.coord.y, 2));
+	return dist;
+}
+
+function genNetworkInfo(numNode, r) {
+	var networkInfo = {};
+	var maxWidth = 4 * r * Math.sqrt(numNode / 24);
+	var maxHeight = 3 * r * Math.sqrt(numNode / 24);
+	networkInfo['maprect'] = {'top': maxHeight, 'left': 0, 'bottom': 0, 'right': maxWidth};
+	var nodes = [];
+	for (var i = 0; i < numNode; i++) {
+		var newNode = {};
+		newNode['address'] = i;
+		newNode['coord'] = {'x': ra(maxWidth), 'y': ra(maxHeight)};
+		newNode['range'] = 0;
+		newNode['neighbor'] = [];
+		nodes.push(newNode);
+	}
+	// update neighbor
+	var iCol = 0;
+	var iRow = 0;
+	var distanceMatrix = [];
+	while(iRow < numNode) {
+		var curNode = nodes[iRow];
+		iCol = iRow + 1
+		while(iCol < numNode) {
+			var targetNode = nodes[iCol];
+			distanceMatrix.push(distance(curNode, targetNode));
+			iCol++;
+		}
+		iRow++;
+	}
+	for (var i = 0; i < nodes.length; i++) {
+		for (var j = 0; j < nodes.length; j++) {
+			if (i == j)
+				continue;
+			else if (i < j)
+				var index = getIndexOfMatrix(numNode, i, j);
+			else if (i > j)
+				var index = getIndexOfMatrix(numNode, j, i);
+			if (distanceMatrix[index] <= r)
+				nodes[i].neighbor.push(j);
+		}
+	}
+	networkInfo['nodes'] = nodes;
+	return networkInfo;
+}
+
+function updateNeighborTable(networkInfo) {
+	// update neighbor
+	var iCol = 0;
+	var iRow = 0;
+	var distanceMatrix = [];
+	var numNode = networkInfo['nodes'].length;
+	while(iRow < numNode) {
+		var curNode = networkInfo['nodes'][iRow];
+		iCol = iRow + 1
+		while(iCol < numNode) {
+			var targetNode = networkInfo['nodes'][iCol];
+			distanceMatrix.push(distance(curNode, targetNode));
+			iCol++;
+		}
+		iRow++;
+	}
+	for (var i = 0; i < numNode; i++) {
+		var r = networkInfo['nodes'][i]['range'];
+		for (var j = 0; j < numNode; j++) {
+			if (i == j)
+				continue;
+			else if (i < j)
+				var index = getIndexOfMatrix(numNode, i, j);
+			else if (i > j)
+				var index = getIndexOfMatrix(numNode, j, i);
+			if (distanceMatrix[index] <= r)
+				networkInfo['nodes'][i].neighbor.push(j);
+		}
 	}
 }

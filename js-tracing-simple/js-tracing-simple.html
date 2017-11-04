@@ -1,0 +1,32 @@
+<html>
+<head>
+	<title>Js Tracing Simple</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h1>Js Tracing Simple</h1>
+
+<div id="pointer" class="pointer"></div>
+<div id="target" class="target"></div>
+<canvas id="networkMap" width="1024" height="768"></canvas>
+
+<script src="network.js" type="text/javascript"></script>
+<script src="gpsr.js" type="text/javascript"></script>
+
+
+<script>
+
+let networkInfo = genNetworkInfo(100, 4);
+let input = new NetworkMap(networkInfo);
+
+emulator = new Emulator('networkMap', 'pointer', 'target');
+emulator.init(input);
+emulator.draw_networkMap();
+
+input.setRouting(new GPSR(input));
+emulator.routing_trace(0, 99);
+
+</script>
+
+</body>
+</html>

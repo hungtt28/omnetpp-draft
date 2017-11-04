@@ -12,3 +12,14 @@ canvas {
     border-radius: 50%;
     border: 1px solid black;
 }
+
+.target {
+    background: orange;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid black;
+}
