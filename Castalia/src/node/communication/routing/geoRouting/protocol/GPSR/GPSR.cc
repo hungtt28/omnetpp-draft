@@ -9,12 +9,12 @@
 #include "GeoRouting.h"
 
 
-GeoRoutingPacket* GPSR::createGeoRoutingPacket(GeoRouting *routing) {
+GeoRoutingPacket* GPSR::createGeoRoutingPacket() {
 	return new GPSRPacket("GPSR routing data packet", NETWORK_LAYER_PACKET);
 }
 
 
-std::tuple<int, GeoRoutingPacket*> GPSR::findNextHop(GeoRouting *routing, GeoRoutingPacket* pkt) {
+std::tuple<int, GeoRoutingPacket*> GPSR::findNextHop(GeoRoutingPacket* pkt) {
 	
 	GPSRPacket *dataPacket = dynamic_cast <GPSRPacket*>(pkt->dup());
 	
@@ -22,11 +22,11 @@ std::tuple<int, GeoRoutingPacket*> GPSR::findNextHop(GeoRouting *routing, GeoRou
     switch (dataPacket->getRoutingMode()) {
 		
         case GPSR_GREEDY_ROUTING: {
-			nextHop = findGreedyRoutingNextHop(routing, dataPacket);
+			nextHop = findGreedyRoutingNextHop(dataPacket);
 			break;
 		}
         case GPSR_PERIMETER_ROUTING: {
-			nextHop = findPerimeterRoutingNextHop(routing, dataPacket);
+			nextHop = findPerimeterRoutingNextHop(dataPacket);
 			break;
 		}
         default: break;
@@ -36,7 +36,7 @@ std::tuple<int, GeoRoutingPacket*> GPSR::findNextHop(GeoRouting *routing, GeoRou
 }
 
 
-int GPSR::findGreedyRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket) {
+int GPSR::findGreedyRoutingNextHop(GPSRPacket* dataPacket) {
 	
 	NodeLocation_type desLocation = dataPacket->getDestinationLocation();
 	NodeLocation_type curLocation = routing->getCurLocation();
@@ -49,8 +49,8 @@ int GPSR::findGreedyRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket) 
 	NeighborTable *neighborTable = routing->getNeighborTable();
 	for (int i = 0; i < neighborTable->size(); i++) {
 		NeighborRecord *neighborRecord = neighborTable->getRecord(i);
-		dist = distance(neighborRecord->getLocation(), desLocation);
-		if (dist < minDist) {
+		dist = distance(neighborRecord->getNodeLocation(), desLocation);
+		if (dist - minDist < ZERO) {
 			minDist = dist;
 			nextHop = neighborRecord->getId();
 		}
@@ -58,17 +58,18 @@ int GPSR::findGreedyRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket) 
 	
 	// if perimeter
 	if (nextHop == -1) {
+		int curId = atoi(routing->getCurAddress());
 		dataPacket->setRoutingMode(GPSR_PERIMETER_ROUTING);
 		dataPacket->setStartPerimeterLocation(curLocation);
 		dataPacket->setFirstSenderAddress(routing->getCurAddress());
 		dataPacket->setFirstReceiverAddress(to_string(-1).c_str());
 		dataPacket->setSenderAddress(to_string(-1).c_str());
-		nextHop = findPerimeterRoutingNextHop(routing, dataPacket);
+		nextHop = findPerimeterRoutingNextHop(dataPacket);
 	}
 	return nextHop;
 }
 
-int GPSR::findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket) {
+int GPSR::findPerimeterRoutingNextHop(GPSRPacket* dataPacket) {
 	
 	NodeLocation_type desLocation = dataPacket->getDestinationLocation();
 	NodeLocation_type startPeriLocation = dataPacket->getStartPerimeterLocation();
@@ -80,14 +81,14 @@ int GPSR::findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacke
 	
 	int nextHop = -1;
 	
-	if (curDistance < minPeriDistance) {
+	if (minPeriDistance - curDistance > ZERO) {
 		NodeLocation_type zeroLocation;
 		zeroLocation.x = 0;
 		zeroLocation.y = 0;
 		dataPacket->setRoutingMode(GPSR_GREEDY_ROUTING);
 		dataPacket->setStartPerimeterLocation(zeroLocation);
 		// dataPacket->setForwardPerimeterLocation();
-		nextHop = findGreedyRoutingNextHop(routing, dataPacket);
+		nextHop = findGreedyRoutingNextHop(dataPacket);
 	}
 	else {
 		int indexRecord = -1;
@@ -100,15 +101,15 @@ int GPSR::findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacke
 		NeighborTable *neighborTable = routing->getNeighborTable();
         do {
             if (nextHop == -1)
-                nextHop = getNextPlanarNeighborCounterClockwise(routing, nextHop, getAngle(curLocation, desLocation));
+                nextHop = getNextPlanarNeighborCounterClockwise(nextHop, getAngle(curLocation, desLocation));
             else {
 				indexRecord = neighborTable->getNeighborIndex(nextHop);
 				if (indexRecord == -1) {
 					nextHop = -1;
 				}
 				else {
-					nextHopLocation = neighborTable->getRecord(indexRecord)->getLocation();
-					nextHop = getNextPlanarNeighborCounterClockwise(routing, nextHop, getAngle(curLocation, nextHopLocation));
+					nextHopLocation = neighborTable->getRecord(indexRecord)->getNodeLocation();
+					nextHop = getNextPlanarNeighborCounterClockwise(nextHop, getAngle(curLocation, nextHopLocation));
 				}
 			}
             if (nextHop == -1)
@@ -117,7 +118,7 @@ int GPSR::findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacke
 			indexRecord = neighborTable->getNeighborIndex(nextHop);
 			if (indexRecord == -1)
 				break;
-			nextHopLocation = neighborTable->getRecord(indexRecord)->getLocation();
+			nextHopLocation = neighborTable->getRecord(indexRecord)->getNodeLocation();
 			
             hasIntersection = intersectSections(startPeriLocation, desLocation, curLocation, nextHopLocation);
 			
@@ -142,7 +143,7 @@ int GPSR::findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacke
 }
 
 
-std::vector<int> GPSR::getPlanarNeighbors(GeoRouting *routing) {
+std::vector<int> GPSR::getPlanarNeighbors() {
 	
     std::vector<int> planarNeighbors;
 	
@@ -150,14 +151,14 @@ std::vector<int> GPSR::getPlanarNeighbors(GeoRouting *routing) {
 	NeighborTable *neighborTable = routing->getNeighborTable();
 	
 	for (unsigned int i = 0; i < neighborTable->size(); i++) {
-		NodeLocation_type neighborLocation = neighborTable->getRecord(i)->getLocation();
-		// dist = distance(neighborRecord->getLocation(), desLocation);
+		NodeLocation_type neighborLocation = neighborTable->getRecord(i)->getNodeLocation();
+		// dist = distance(neighborRecord->getNodeLocation(), desLocation);
 		if (planarizationMode.compare(GPSR_RNG_PLANARIZATION) == 0) {
 			double neighborDistance = distance(curLocation, neighborLocation);
 			for (unsigned int j = 0; j < neighborTable->size(); j++) {
 				if (i == j)
 					continue;
-				NodeLocation_type witnessLocation = neighborTable->getRecord(j)->getLocation();
+				NodeLocation_type witnessLocation = neighborTable->getRecord(j)->getNodeLocation();
 				if (neighborDistance > distance(curLocation, witnessLocation) && neighborDistance > distance(witnessLocation, neighborLocation))
 					goto eliminate;
 			}
@@ -170,7 +171,7 @@ std::vector<int> GPSR::getPlanarNeighbors(GeoRouting *routing) {
 			for (unsigned int j = 0; j < neighborTable->size(); j++) {
 				if (i == j)
 					continue;
-				NodeLocation_type witnessLocation = neighborTable->getRecord(j)->getLocation();
+				NodeLocation_type witnessLocation = neighborTable->getRecord(j)->getNodeLocation();
 				if (radius > distance(witnessLocation, middleLocation))
 					goto eliminate;
 			}
@@ -183,12 +184,12 @@ std::vector<int> GPSR::getPlanarNeighbors(GeoRouting *routing) {
 	return planarNeighbors;
 }
 
-int GPSR::getNextPlanarNeighborCounterClockwise(GeoRouting *routing, const int startNeighborAddress, double startNeighborAngle) {
+int GPSR::getNextPlanarNeighborCounterClockwise(const int startNeighborAddress, double startNeighborAngle) {
 	
     int nextHop = startNeighborAddress;
     double nextHopAngleDifference = 2 * M_PI;
 	
-    std::vector<int> planarNeighbors = getPlanarNeighbors(routing);
+    std::vector<int> planarNeighbors = getPlanarNeighbors();
 	
 	NodeLocation_type curLocation = routing->getCurLocation();
 	NeighborTable *neighborTable = routing->getNeighborTable();
@@ -196,7 +197,7 @@ int GPSR::getNextPlanarNeighborCounterClockwise(GeoRouting *routing, const int s
 		int indexRecord = neighborTable->getNeighborIndex(neighborAddress);
 		if (indexRecord == -1)
 			continue;
-		NodeLocation_type neighborLocation = neighborTable->getRecord(indexRecord)->getLocation();
+		NodeLocation_type neighborLocation = neighborTable->getRecord(indexRecord)->getNodeLocation();
         double neighborAngle = getAngle(curLocation, neighborLocation);
         double neighborAngleDifference = neighborAngle - startNeighborAngle;
         if (neighborAngleDifference < 1e-10)

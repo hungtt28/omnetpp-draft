@@ -26,6 +26,7 @@ class RoutingPacket;
 enum GeoPacketDef {
 	GEO_BEACON_PACKET = 0;
 	GEO_ROUTING_PACKET = 1;
+	GEO_CONTROL_PACKET = 2;
 }
 
 //
@@ -33,6 +34,7 @@ enum GeoPacketDef {
 //
 packet GeoPacket extends RoutingPacket {
     int geoPacketType enum (GeoPacketDef);
+	int sourceId = -1;
 	
 	// for extend data
 }

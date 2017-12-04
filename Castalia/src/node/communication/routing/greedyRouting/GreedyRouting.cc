@@ -20,14 +20,14 @@
  *      Author: hungtt28
  */
 
-#include "GeoRouting.h"
+#include "GreedyRouting.h"
 
-Define_Module(GeoRouting);
+Define_Module(GreedyRouting);
 
 //================================================================
 //    startup
 //================================================================
-void GeoRouting::startup(){
+void GreedyRouting::startup(){
 
 	isCoordinateSet = false;
     
@@ -37,10 +37,6 @@ void GeoRouting::startup(){
 	seqHello = par("seqHello");
 	
 	neighborTable = new NeighborTable();
-	geoProtocol = getGeoProtocol(par("protocolName"));
-	geoProtocol->setProtocolMode(par("protocolMode"));
-	geoProtocol->setGeoRouting(this);
-	geoProtocol->initialize();
 	
 	declareOutput("GPSR Packets received");
 	declareOutput("GPSR Packets sent");
@@ -52,16 +48,15 @@ void GeoRouting::startup(){
 //================================================================
 //    timerFiredCallback
 //================================================================
-void GeoRouting::timerFiredCallback(int index){
+void GreedyRouting::timerFiredCallback(int index){
 
 	switch(index){
-		case GEO_HELLO_MSG_REFRESH_TIMER :{
+		case GREEDY_HELLO_MSG_REFRESH_TIMER :{
 			sendHelloMessage();
 			break;
 		}
 		
 		default: {
-			geoProtocol->processTimerCallback(index);
 			break;
 		}
 	}
@@ -71,7 +66,7 @@ void GeoRouting::timerFiredCallback(int index){
 /*
 handleNetworkControlCommand interface handle NETWORK_CONTROL_COMMAND from Application Layer
 */
-void GeoRouting::handleNetworkControlCommand(cMessage *msg) {
+void GreedyRouting::handleNetworkControlCommand(cMessage *msg) {
 
 	GeoRoutingControl *cmd = check_and_cast <GeoRoutingControl*>(msg);
 
@@ -95,19 +90,19 @@ void GeoRouting::handleNetworkControlCommand(cMessage *msg) {
 //    processBufferedPacket
 //================================================================
 
-void GeoRouting::processBufferedPacket(){
-	while (!TXBuffer.empty()) {
-		toMacLayer(TXBuffer.front(), BROADCAST_MAC_ADDRESS);
-		TXBuffer.pop();
-	}
-}
+// void GreedyRouting::processBufferedPacket(){
+	// while (!TXBuffer.empty()) {
+		// toMacLayer(TXBuffer.front(), BROADCAST_MAC_ADDRESS);
+		// TXBuffer.pop();
+	// }
+// }
 
 //================================================================
 //    fromApplicationLayer
 //================================================================
-void GeoRouting::fromApplicationLayer(cPacket * pkt, const char *destination){  
+void GreedyRouting::fromApplicationLayer(cPacket * pkt, const char *destination){  
 
-	GeoRoutingPacket *dataPacket = geoProtocol->createGeoRoutingPacket();
+	GreedyRoutingPacket *dataPacket = new GreedyRoutingPacket("Greedy routing data packet", NETWORK_LAYER_PACKET);
 	GeoApplicationPacket *appPacket = check_and_cast <GeoApplicationPacket*>(pkt);
 	NodeLocation_type desLocation = appPacket->getDestinationLocation();
 
@@ -122,7 +117,7 @@ void GeoRouting::fromApplicationLayer(cPacket * pkt, const char *destination){
 		return;
     }
 
-	geoProtocol->forwardDataPacket(dataPacket);
+	forwardDataPacket(dataPacket);
 	delete dataPacket;
 	return;
 }
@@ -130,7 +125,7 @@ void GeoRouting::fromApplicationLayer(cPacket * pkt, const char *destination){
 //================================================================
 //    fromMacLayer
 //================================================================
-void GeoRouting::fromMacLayer(cPacket * pkt, int macAddress, double rssi, double lqi){
+void GreedyRouting::fromMacLayer(cPacket * pkt, int macAddress, double rssi, double lqi){
 	
     GeoPacket *netPacket = dynamic_cast <GeoPacket*>(pkt);
 
@@ -152,7 +147,7 @@ void GeoRouting::fromMacLayer(cPacket * pkt, int macAddress, double rssi, double
         // process data packet
 		case GEO_ROUTING_PACKET:{
 			
-			GeoRoutingPacket *routingPacket = dynamic_cast <GeoRoutingPacket*>(pkt);
+			GreedyRoutingPacket *routingPacket = dynamic_cast <GreedyRoutingPacket*>(pkt);
 			string destination(routingPacket->getDestination());
 			string source(routingPacket->getSource());
 
@@ -166,15 +161,8 @@ void GeoRouting::fromMacLayer(cPacket * pkt, int macAddress, double rssi, double
 				toApplicationLayer(routingPacket->decapsulate());
 			}
 			else {
-				geoProtocol->forwardDataPacket(routingPacket);
+				forwardDataPacket(routingPacket);
 			}
-			break;
-		}
-
-		// process control packet
-		case GEO_CONTROL_PACKET: {
-			GeoControlPacket *controlPacket = dynamic_cast <GeoControlPacket*>(pkt);
-			geoProtocol->processControlPacket(controlPacket);
 			break;
 		}
 		
@@ -185,14 +173,14 @@ void GeoRouting::fromMacLayer(cPacket * pkt, int macAddress, double rssi, double
 //================================================================
 //    finishSpecific
 //================================================================
-void GeoRouting::finishSpecific() {
+void GreedyRouting::finishSpecific() {
 
 }
 
 //================================================================
 //    sendHelloMsg
 //================================================================
-void GeoRouting::sendHelloMessage(){
+void GreedyRouting::sendHelloMessage(){
 	
     GeoBeaconPacket *helloMsg = new GeoBeaconPacket("Geo hello message packet", NETWORK_LAYER_PACKET);
     helloMsg->setSource(SELF_NETWORK_ADDRESS);
@@ -200,18 +188,43 @@ void GeoRouting::sendHelloMessage(){
     toMacLayer(helloMsg, BROADCAST_MAC_ADDRESS);
 	
 	seqHello++;
-	setTimer(GEO_HELLO_MSG_REFRESH_TIMER, helloInterval);
+	setTimer(GREEDY_HELLO_MSG_REFRESH_TIMER, helloInterval);
 	
 	return;
 }
 
-void GeoRouting::sendToNextHop(GeoPacket* dataPacket, int nextHop) {
+void GreedyRouting::forwardDataPacket(GreedyRoutingPacket* pkt) {
+	
+	GreedyRoutingPacket *dataPacket = pkt->dup();
+	NodeLocation_type desLocation = dataPacket->getDestinationLocation();
+	
+	int nextHop = -1;
+	double dist = -1;
+	double minDist = distance(nodeLocation, desLocation);
+	
+	// greedy
+	for (int i = 0; i < neighborTable->size(); i++) {
+		NeighborRecord *neighborRecord = neighborTable->getRecord(i);
+		dist = distance(neighborRecord->getNodeLocation(), desLocation);
+		if (dist < minDist) {
+			minDist = dist;
+			nextHop = neighborRecord->getId();
+		}
+	}
+	
+	sendToNextHop(dataPacket, nextHop);
+	
+	return;
+}
+
+void GreedyRouting::sendToNextHop(GeoPacket* dataPacket, int nextHop) {
+	
 	// send packet to nexthop
 	string destination(dataPacket->getDestination());
 	string source(dataPacket->getSource());
 	if (nextHop != -1) {
 		trace() << setw(10) << "SEND" << "PACKET #" << setw(10) << dataPacket->getSequenceNumber() << "FROM " << setw(10) << source << "TO " << setw(10) << destination << "currentHop " << setw(10) << SELF_NETWORK_ADDRESS << "nextHop " << setw(10) << nextHop;
-		dataPacket->setSourceId(atoi(SELF_NETWORK_ADDRESS));
+		
 		toMacLayer(dataPacket, nextHop);
     }
 	else {

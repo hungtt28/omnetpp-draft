@@ -14,6 +14,10 @@
 #define M_PI    3.1415926535897932384626433832795
 #endif
 
+#ifndef ZERO
+#define ZERO 1e-10
+#endif
+
 struct Coord {
 	double x;
 	double y;
@@ -34,8 +38,11 @@ double distance(NodeLocation_type node1, NodeLocation_type node2);
 
 double getVectorAngle(NodeLocation_type vector);
 double getAngle(NodeLocation_type node1, NodeLocation_type node2);
+double getAngle(double angle1, double angle2);
 
 double determinant(double a1, double a2, double b1, double b2);
 bool intersectSections(NodeLocation_type begin1, NodeLocation_type end1, NodeLocation_type begin2, NodeLocation_type end2);
+
+NodeLocation_type getCircumscribedcircleCenter(NodeLocation_type node1, NodeLocation_type node2, NodeLocation_type node3);
 
 #endif /* GEOHELPER_H_ */

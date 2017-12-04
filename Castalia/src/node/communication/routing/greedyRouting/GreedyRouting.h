@@ -14,36 +14,36 @@
 /*********************************************************/
 
 /*
- * WSN Geographic Routing base on Castialia/Omnetpp
+ * WSN Greedygraphic Routing base on Castialia/Omnetpp
  *
  *  Created on: Nov 3, 2017
  *      Author: hungtt28
  */
 
-#ifndef _GEOROUTING_H_
-#define _GEOROUTING_H_
+#ifndef _GREEDYROUTING_H_
+#define _GREEDYROUTING_H_
 
 #include <map>
 #include <tuple>
 #include "VirtualRouting.h"
+#include "NeighborTable.h"
+#include "GeoHelper.h"
+#include "VirtualMobilityManager.h"
 #include "GeoApplicationPacket_m.h"
 #include "GeoRoutingControl_m.h"
 #include "GeoPacket_m.h"
 #include "GeoBeaconPacket_m.h"
-#include "GeoRoutingPacket_m.h"
-#include "GeoControlPacket_m.h"
-#include "GeoProtocolHelper.h"
+#include "GreedyRoutingPacket_m.h"
 
 
 using namespace std;
 
 
-enum GeoRoutingTimers {
-    GEO_HELLO_MSG_REFRESH_TIMER = 0,
-	GEO_TIMER = 1,
+enum GreedyRoutingTimers {
+    GREEDY_HELLO_MSG_REFRESH_TIMER = 0,
 };
 
-class GeoRouting: public VirtualRouting {
+class GreedyRouting: public VirtualRouting {
  private:
     // Parameters
     double netSetupTimeout;
@@ -52,42 +52,13 @@ class GeoRouting: public VirtualRouting {
     double helloInterval;
     double activeRouteTimeout; //in s
 
-    // GeoRouting-related member variables
+    // GreedyRouting-related member variables
 	bool isCoordinateSet = false; // to know whether the node's position has been set or not
     int totalSNnodes;
     int packetsPerNode;
     int seqHello;
 	NodeLocation_type nodeLocation;
 	NeighborTable *neighborTable;
-	GeoProtocol *geoProtocol;
-
-public:
-	NodeLocation_type& getCurLocation() {
-		return nodeLocation;
-	};
-	
-	NeighborTable* getNeighborTable() {
-		return neighborTable;
-	};
-	
-	const char* getCurAddress() {
-		return SELF_NETWORK_ADDRESS;
-	};
-	
-	double getHelloInterval() {
-		return helloInterval;
-	};
-	
-	void setTimerEvent(int event, double timeDelay) {
-		setTimer(event, timeDelay);
-		return;
-	}
-	
-	std::ostream & Trace() {
-		return (ostream &) trace();
-	}
-	
-	void sendToNextHop(GeoPacket* dataPacket, int nextHop);
 	
  protected:
 
@@ -96,12 +67,13 @@ public:
     void fromApplicationLayer(cPacket *, const char *);
     void fromMacLayer(cPacket *, int, double, double);
 	void handleNetworkControlCommand(cMessage *);
-    void sendTopologySetupPacket();
     void timerFiredCallback(int);
-    void processBufferedPacket();
+    // void processBufferedPacket();
 
     void sendHelloMessage();
+	void forwardDataPacket(GreedyRoutingPacket* dataPacket);
+	void sendToNextHop(GeoPacket* dataPacket, int nextHop);
 
 };
 
-#endif				//GEOROUTINGMODULE
+#endif				//GREEDYROUTINGMODULE

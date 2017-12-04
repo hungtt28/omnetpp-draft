@@ -21,12 +21,8 @@
 // }}
 
 /**
- * Class generated from <tt>src/node/application/routingTest/GeoApplicationPacket.msg:32</tt> by nedtool.
+ * Class generated from <tt>src/node/application/routingTest/GeoApplicationPacket.msg:28</tt> by nedtool.
  * <pre>
- * //
- * // The GPSR beacon packet is sent periodically by all GPSR routers to notify
- * // the neighbors about the router's address and position.
- * //
  * packet GeoApplicationPacket extends ApplicationPacket
  * {
  *     NodeLocation_type destinationLocation;

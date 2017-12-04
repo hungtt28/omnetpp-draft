@@ -25,10 +25,6 @@ cplusplus {{
 class GeoPacket;
 struct NodeLocation_type;
 
-//
-// The GPSR beacon packet is sent periodically by all GPSR routers to notify
-// the neighbors about the router's address and position.
-//
 packet GeoRoutingPacket extends GeoPacket {
     int geoPacketType = GEO_ROUTING_PACKET;
 	NodeLocation_type destinationLocation;

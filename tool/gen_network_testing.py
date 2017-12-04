@@ -32,6 +32,9 @@ class Graph():
 				return True
 		return False
 		
+	def addNode(self, node):
+		self.nodes.append(node)
+		
 def gen_neighbor(curNode, r, b):
 	x = random.randrange(r)
 	y = random.randint(0, int(math.sqrt(r*r - x * x)))
@@ -62,6 +65,26 @@ def gen_coordinates(num, r):
 			continue
 		graph.nodes.append(newNode)
 		curNode = newNode
+		num -= 1
+	return graph
+		
+# gen nodes by grid
+def gen_node_by_grid(num, r):
+	graph = Graph()
+	GRID_HEIGHT = 4
+	GRID_WIDTH = 4
+	nodePerArea = num / (GRID_HEIGHT * GRID_WIDTH)
+	widthArea = r * 1.5
+	heightArea = r * 1.5
+	for i in range(GRID_WIDTH):
+		for j in range(GRID_HEIGHT):
+			for k in range(nodePerArea):
+				newNode = Coord(i * widthArea + random.random() * widthArea, j * heightArea + random.random() * heightArea)
+				graph.addNode(newNode)
+				num -= 1
+	while(num):
+		newNode = Coord(widthArea * GRID_WIDTH * random.random(), heightArea * GRID_HEIGHT * random.random())
+		graph.addNode(newNode)
 		num -= 1
 	return graph
 		
@@ -136,7 +159,8 @@ def to_castalia_format(graph, num, r):
 	return
 	
 def gen_network_testing(num, r):
-	graph = gen_coordinates(num, r)
+	# graph = gen_coordinates(num, r)
+	graph = gen_node_by_grid(num, r)
 	graph.updateNeighbor(r)
 	to_omnetpp_ini(graph, num, r)
 	to_js_json(graph, num, r)

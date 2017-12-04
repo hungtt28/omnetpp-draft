@@ -16,7 +16,10 @@
 #include "GPSR.h"
 #define _GPSR_ "GPSR"
 
+#include "BoundHole.h"
+#define _BOUNDHOLE_ "BoundHole"
 
-GeoProtocol *getGeoProtocol(string protocolType, string protocolMode);
+
+GeoProtocol *getGeoProtocol(string protocolType);
 
 #endif

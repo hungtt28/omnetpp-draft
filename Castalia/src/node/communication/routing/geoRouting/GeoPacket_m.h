@@ -27,16 +27,18 @@
  * 
  *     GEO_BEACON_PACKET = 0;
  *     GEO_ROUTING_PACKET = 1;
+ *     GEO_CONTROL_PACKET = 2;
  * }
  * </pre>
  */
 enum GeoPacketDef {
     GEO_BEACON_PACKET = 0,
-    GEO_ROUTING_PACKET = 1
+    GEO_ROUTING_PACKET = 1,
+    GEO_CONTROL_PACKET = 2
 };
 
 /**
- * Class generated from <tt>src/node/communication/routing/geoRouting/GeoPacket.msg:34</tt> by nedtool.
+ * Class generated from <tt>src/node/communication/routing/geoRouting/GeoPacket.msg:35</tt> by nedtool.
  * <pre>
  * //
  * // The GEO packet is parent packet to define packet type
@@ -44,6 +46,7 @@ enum GeoPacketDef {
  * packet GeoPacket extends RoutingPacket
  * {
  *     int geoPacketType @enum(GeoPacketDef);
+ *     int sourceId = -1;
  * 
  * 	// for extend data
  * }
@@ -53,6 +56,7 @@ class GeoPacket : public ::RoutingPacket
 {
   protected:
     int geoPacketType_var;
+    int sourceId_var;
 
   private:
     void copy(const GeoPacket& other);
@@ -73,6 +77,8 @@ class GeoPacket : public ::RoutingPacket
     // field getter/setter methods
     virtual int getGeoPacketType() const;
     virtual void setGeoPacketType(int geoPacketType);
+    virtual int getSourceId() const;
+    virtual void setSourceId(int sourceId);
 };
 
 inline void doPacking(cCommBuffer *b, GeoPacket& obj) {obj.parsimPack(b);}

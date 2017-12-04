@@ -21,57 +21,57 @@ void CastaliaModule::finish()
 		return;
 	bool header = true;
 
-	simpleOutputMapType::iterator i1;
-	for (i1 = simpleoutputs.begin(); i1 != simpleoutputs.end(); i1++) {
-		string descr = i1->first;
-		simpleOutputByIndex *outByIndex = &i1->second;
-		map<int,simpleOutputTypeDef>::iterator i2;
-		for (i2 = outByIndex->byIndex.begin(); i2 != outByIndex->byIndex.end(); i2++) {
-			int index = i2->first;
-			simpleOutputTypeDef *out = &i2->second;
-			if (out->data.size() == 0)
-				continue;
-			if (header) {
-				EV << CASTALIA_PREFIX << "module:" << getFullPath() << endl;
-				header = false;
-			}
-			EV << CASTALIA_PREFIX << "\t";
-			if (index >= 0)
-				EV << " index:" << index << " ";
-			EV << "simple output name:" << descr << endl;
-			map<string,double>::iterator i3;
-			for (i3 = out->data.begin(); i3 != out->data.end(); i3++)
-				EV << CASTALIA_PREFIX "\t\t" << i3->second << " " << i3->first << endl;
-		}
-	}
+	// simpleOutputMapType::iterator i1;
+	// for (i1 = simpleoutputs.begin(); i1 != simpleoutputs.end(); i1++) {
+		// string descr = i1->first;
+		// simpleOutputByIndex *outByIndex = &i1->second;
+		// map<int,simpleOutputTypeDef>::iterator i2;
+		// for (i2 = outByIndex->byIndex.begin(); i2 != outByIndex->byIndex.end(); i2++) {
+			// int index = i2->first;
+			// simpleOutputTypeDef *out = &i2->second;
+			// if (out->data.size() == 0)
+				// continue;
+			// if (header) {
+				// EV << CASTALIA_PREFIX << "module:" << getFullPath() << endl;
+				// header = false;
+			// }
+			// EV << CASTALIA_PREFIX << "\t";
+			// if (index >= 0)
+				// EV << " index:" << index << " ";
+			// EV << "simple output name:" << descr << endl;
+			// map<string,double>::iterator i3;
+			// for (i3 = out->data.begin(); i3 != out->data.end(); i3++)
+				// EV << CASTALIA_PREFIX "\t\t" << i3->second << " " << i3->first << endl;
+		// }
+	// }
 	simpleoutputs.clear();
 
-	histogramOutputMapType::iterator i4;
-	for (i4 = histograms.begin(); i4 != histograms.end(); i4++) {
-		string descr = i4->first;
-		histogramOutputByIndex *hist = &i4->second;
-		if (!hist->active)
-			continue;
-		map <int,histogramOutputTypeDef>::iterator i5;
-		for (i5 = hist->byIndex.begin(); i5 != hist->byIndex.end(); i5++) {
-			int index = i5->first;
-			histogramOutputTypeDef *histBuckets = &i5->second;
-			if (header) {
-				EV << CASTALIA_PREFIX << "module:" << getFullPath() << endl;
-				header = false;
-			}
-			EV << CASTALIA_PREFIX << "\t";
-			if (index >= 0)
-				EV << " index:" << index << " ";
-			EV << "histogram name:" << descr << endl;
-			EV << CASTALIA_PREFIX << "\thistogram_min:" << hist->min <<
-				" histogram_max:" << hist->max << endl;
-			EV << CASTALIA_PREFIX << "\thistogram_values";
-			for (int i = 0; i <= hist->numBuckets; i++)
-				EV << " " << histBuckets->buckets[i];
-			EV << endl;
-		}
-	}
+	// histogramOutputMapType::iterator i4;
+	// for (i4 = histograms.begin(); i4 != histograms.end(); i4++) {
+		// string descr = i4->first;
+		// histogramOutputByIndex *hist = &i4->second;
+		// if (!hist->active)
+			// continue;
+		// map <int,histogramOutputTypeDef>::iterator i5;
+		// for (i5 = hist->byIndex.begin(); i5 != hist->byIndex.end(); i5++) {
+			// int index = i5->first;
+			// histogramOutputTypeDef *histBuckets = &i5->second;
+			// if (header) {
+				// EV << CASTALIA_PREFIX << "module:" << getFullPath() << endl;
+				// header = false;
+			// }
+			// EV << CASTALIA_PREFIX << "\t";
+			// if (index >= 0)
+				// EV << " index:" << index << " ";
+			// EV << "histogram name:" << descr << endl;
+			// EV << CASTALIA_PREFIX << "\thistogram_min:" << hist->min <<
+				// " histogram_max:" << hist->max << endl;
+			// EV << CASTALIA_PREFIX << "\thistogram_values";
+			// for (int i = 0; i <= hist->numBuckets; i++)
+				// EV << " " << histBuckets->buckets[i];
+			// EV << endl;
+		// }
+	// }
 	histograms.clear();
 }
 

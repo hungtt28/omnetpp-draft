@@ -24,7 +24,7 @@ class NeighborRecord {
 			return id;
 		};
 		
-		virtual NodeLocation_type getLocation() {
+		virtual NodeLocation_type getNodeLocation() {
 			return nodeLocation;
 		};
 };

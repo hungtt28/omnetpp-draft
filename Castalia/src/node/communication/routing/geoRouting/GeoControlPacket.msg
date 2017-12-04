@@ -18,15 +18,18 @@
 //
 
 cplusplus {{
-#include "ApplicationPacket_m.h"
+#include "GeoPacket_m.h"
 #include "VirtualMobilityManager.h"
 }}
 
-class ApplicationPacket;
+class GeoPacket;
 struct NodeLocation_type;
 
-packet GeoApplicationPacket extends ApplicationPacket {
-    NodeLocation_type destinationLocation;
+//
+packet GeoControlPacket extends GeoPacket {
+    int geoPacketType = GEO_CONTROL_PACKET;
+
+	// for control parameters
 }
 
 

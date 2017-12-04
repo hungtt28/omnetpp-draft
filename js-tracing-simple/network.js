@@ -62,6 +62,8 @@ class Emulator {
 			var connection = this.network.connection[i];
 			var src = this.network.getNode(connection.src);
 			var des = this.network.getNode(connection.des);
+			if (des == undefined)
+				continue;
 			ctx.beginPath();
 			ctx.lineWidth = this.lineWidth;
 			ctx.moveTo(src.coord.x * this.scale, src.coord.y * this.scale);
@@ -76,7 +78,7 @@ class Emulator {
 			ctx.rotate(Math.PI);
 			ctx.scale(-1, 1);
 			ctx.fillStyle = "black";
-			ctx.font = "20px Arial";
+			ctx.font = "10px Arial";
 			ctx.fillText(node.address.toString(), 0, 0);
 			ctx.stroke();
 			ctx.restore();

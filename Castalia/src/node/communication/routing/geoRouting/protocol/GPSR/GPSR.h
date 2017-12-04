@@ -26,14 +26,14 @@ class GPSR: public GeoProtocol {
 		}
 		
 	protected:
-		int findGreedyRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket);
-		int findPerimeterRoutingNextHop(GeoRouting *routing, GPSRPacket* dataPacket);
-		std::vector<int> getPlanarNeighbors(GeoRouting *routing);
-		int getNextPlanarNeighborCounterClockwise(GeoRouting *routing, const int startNeighborAddress, double startNeighborAngle);
+		int findGreedyRoutingNextHop(GPSRPacket* dataPacket);
+		int findPerimeterRoutingNextHop(GPSRPacket* dataPacket);
+		std::vector<int> getPlanarNeighbors();
+		int getNextPlanarNeighborCounterClockwise(const int startNeighborAddress, double startNeighborAngle);
 		
 	public:
-		std::tuple<int, GeoRoutingPacket*> findNextHop(GeoRouting *routing, GeoRoutingPacket* pkt);
-		GeoRoutingPacket* createGeoRoutingPacket(GeoRouting *routing);
+		GeoRoutingPacket* createGeoRoutingPacket();
+		std::tuple<int, GeoRoutingPacket*> findNextHop(GeoRoutingPacket* pkt);
 		
 };
 

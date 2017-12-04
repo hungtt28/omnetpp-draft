@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 4.6 from src/node/communication/routing/geoRouting/GeoPacket.msg.
+// Generated file, do not edit! Created by nedtool 4.6 from src/node/communication/routing/greedyRouting/GreedyRoutingPacket.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "GeoPacket_m.h"
+#include "GreedyRoutingPacket_m.h"
 
 USING_NAMESPACE
 
@@ -53,84 +53,75 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 template<typename T>
 inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
 
-EXECUTE_ON_STARTUP(
-    cEnum *e = cEnum::find("GeoPacketDef");
-    if (!e) enums.getInstance()->add(e = new cEnum("GeoPacketDef"));
-    e->insert(GEO_BEACON_PACKET, "GEO_BEACON_PACKET");
-    e->insert(GEO_ROUTING_PACKET, "GEO_ROUTING_PACKET");
-    e->insert(GEO_CONTROL_PACKET, "GEO_CONTROL_PACKET");
-);
+Register_Class(GreedyRoutingPacket);
 
-Register_Class(GeoPacket);
-
-GeoPacket::GeoPacket(const char *name, int kind) : ::RoutingPacket(name,kind)
+GreedyRoutingPacket::GreedyRoutingPacket(const char *name, int kind) : ::GeoPacket(name,kind)
 {
-    this->geoPacketType_var = 0;
-    this->sourceId_var = -1;
+    this->geoPacketType_var = GEO_ROUTING_PACKET;
 }
 
-GeoPacket::GeoPacket(const GeoPacket& other) : ::RoutingPacket(other)
+GreedyRoutingPacket::GreedyRoutingPacket(const GreedyRoutingPacket& other) : ::GeoPacket(other)
 {
     copy(other);
 }
 
-GeoPacket::~GeoPacket()
+GreedyRoutingPacket::~GreedyRoutingPacket()
 {
 }
 
-GeoPacket& GeoPacket::operator=(const GeoPacket& other)
+GreedyRoutingPacket& GreedyRoutingPacket::operator=(const GreedyRoutingPacket& other)
 {
     if (this==&other) return *this;
-    ::RoutingPacket::operator=(other);
+    ::GeoPacket::operator=(other);
     copy(other);
     return *this;
 }
 
-void GeoPacket::copy(const GeoPacket& other)
+void GreedyRoutingPacket::copy(const GreedyRoutingPacket& other)
 {
     this->geoPacketType_var = other.geoPacketType_var;
-    this->sourceId_var = other.sourceId_var;
+    this->destinationLocation_var = other.destinationLocation_var;
 }
 
-void GeoPacket::parsimPack(cCommBuffer *b)
+void GreedyRoutingPacket::parsimPack(cCommBuffer *b)
 {
-    ::RoutingPacket::parsimPack(b);
+    ::GeoPacket::parsimPack(b);
     doPacking(b,this->geoPacketType_var);
-    doPacking(b,this->sourceId_var);
+    doPacking(b,this->destinationLocation_var);
 }
 
-void GeoPacket::parsimUnpack(cCommBuffer *b)
+void GreedyRoutingPacket::parsimUnpack(cCommBuffer *b)
 {
-    ::RoutingPacket::parsimUnpack(b);
+    ::GeoPacket::parsimUnpack(b);
     doUnpacking(b,this->geoPacketType_var);
-    doUnpacking(b,this->sourceId_var);
+    doUnpacking(b,this->destinationLocation_var);
 }
 
-int GeoPacket::getGeoPacketType() const
+int GreedyRoutingPacket::getGeoPacketType() const
 {
     return geoPacketType_var;
 }
 
-void GeoPacket::setGeoPacketType(int geoPacketType)
+void GreedyRoutingPacket::setGeoPacketType(int geoPacketType)
 {
     this->geoPacketType_var = geoPacketType;
 }
 
-int GeoPacket::getSourceId() const
+NodeLocation_type& GreedyRoutingPacket::getDestinationLocation()
 {
-    return sourceId_var;
+    return destinationLocation_var;
 }
 
-void GeoPacket::setSourceId(int sourceId)
+void GreedyRoutingPacket::setDestinationLocation(const NodeLocation_type& destinationLocation)
 {
-    this->sourceId_var = sourceId;
+    this->destinationLocation_var = destinationLocation;
 }
 
-class GeoPacketDescriptor : public cClassDescriptor
+class GreedyRoutingPacketDescriptor : public cClassDescriptor
 {
   public:
-    GeoPacketDescriptor();
-    virtual ~GeoPacketDescriptor();
+    GreedyRoutingPacketDescriptor();
+    virtual ~GreedyRoutingPacketDescriptor();
 
     virtual bool doesSupport(cObject *obj) const;
     virtual const char *getProperty(const char *propertyname) const;
@@ -149,34 +140,34 @@ class GeoPacketDescriptor : public cClassDescriptor
     virtual void *getFieldStructPointer(void *object, int field, int i) const;
 };
 
-Register_ClassDescriptor(GeoPacketDescriptor);
+Register_ClassDescriptor(GreedyRoutingPacketDescriptor);
 
-GeoPacketDescriptor::GeoPacketDescriptor() : cClassDescriptor("GeoPacket", "RoutingPacket")
+GreedyRoutingPacketDescriptor::GreedyRoutingPacketDescriptor() : cClassDescriptor("GreedyRoutingPacket", "GeoPacket")
 {
 }
 
-GeoPacketDescriptor::~GeoPacketDescriptor()
+GreedyRoutingPacketDescriptor::~GreedyRoutingPacketDescriptor()
 {
 }
 
-bool GeoPacketDescriptor::doesSupport(cObject *obj) const
+bool GreedyRoutingPacketDescriptor::doesSupport(cObject *obj) const
 {
-    return dynamic_cast<GeoPacket *>(obj)!=NULL;
+    return dynamic_cast<GreedyRoutingPacket *>(obj)!=NULL;
 }
 
-const char *GeoPacketDescriptor::getProperty(const char *propertyname) const
+const char *GreedyRoutingPacketDescriptor::getProperty(const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : NULL;
 }
 
-int GeoPacketDescriptor::getFieldCount(void *object) const
+int GreedyRoutingPacketDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? 2+basedesc->getFieldCount(object) : 2;
 }
 
-unsigned int GeoPacketDescriptor::getFieldTypeFlags(void *object, int field) const
+unsigned int GreedyRoutingPacketDescriptor::getFieldTypeFlags(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -186,12 +177,12 @@ unsigned int GeoPacketDescriptor::getFieldTypeFlags(void *object, int field) con
     }
     static unsigned int fieldTypeFlags[] = {
         FD_ISEDITABLE,
-        FD_ISEDITABLE,
+        FD_ISCOMPOUND,
     };
     return (field>=0 && field<2) ? fieldTypeFlags[field] : 0;
 }
 
-const char *GeoPacketDescriptor::getFieldName(void *object, int field) const
+const char *GreedyRoutingPacketDescriptor::getFieldName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -201,21 +192,21 @@ const char *GeoPacketDescriptor::getFieldName(void *object, int field) const
     }
     static const char *fieldNames[] = {
         "geoPacketType",
-        "sourceId",
+        "destinationLocation",
     };
     return (field>=0 && field<2) ? fieldNames[field] : NULL;
 }
 
-int GeoPacketDescriptor::findField(void *object, const char *fieldName) const
+int GreedyRoutingPacketDescriptor::findField(void *object, const char *fieldName) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount(object) : 0;
     if (fieldName[0]=='g' && strcmp(fieldName, "geoPacketType")==0) return base+0;
-    if (fieldName[0]=='s' && strcmp(fieldName, "sourceId")==0) return base+1;
+    if (fieldName[0]=='d' && strcmp(fieldName, "destinationLocation")==0) return base+1;
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
-const char *GeoPacketDescriptor::getFieldTypeString(void *object, int field) const
+const char *GreedyRoutingPacketDescriptor::getFieldTypeString(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -225,12 +216,12 @@ const char *GeoPacketDescriptor::getFieldTypeString(void *object, int field) con
     }
     static const char *fieldTypeStrings[] = {
         "int",
-        "int",
+        "NodeLocation_type",
     };
     return (field>=0 && field<2) ? fieldTypeStrings[field] : NULL;
 }
 
-const char *GeoPacketDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
+const char *GreedyRoutingPacketDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -239,14 +230,11 @@ const char *GeoPacketDescriptor::getFieldProperty(void *object, int field, const
         field -= basedesc->getFieldCount(object);
     }
     switch (field) {
-        case 0:
-            if (!strcmp(propertyname,"enum")) return "GeoPacketDef";
-            return NULL;
         default: return NULL;
     }
 }
 
-int GeoPacketDescriptor::getArraySize(void *object, int field) const
+int GreedyRoutingPacketDescriptor::getArraySize(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -254,13 +242,13 @@ int GeoPacketDescriptor::getArraySize(void *object, int field) const
             return basedesc->getArraySize(object, field);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GreedyRoutingPacket *pp = (GreedyRoutingPacket *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-std::string GeoPacketDescriptor::getFieldAsString(void *object, int field, int i) const
+std::string GreedyRoutingPacketDescriptor::getFieldAsString(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -268,15 +256,15 @@ std::string GeoPacketDescriptor::getFieldAsString(void *object, int field, int i
             return basedesc->getFieldAsString(object,field,i);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GreedyRoutingPacket *pp = (GreedyRoutingPacket *)object; (void)pp;
     switch (field) {
         case 0: return long2string(pp->getGeoPacketType());
-        case 1: return long2string(pp->getSourceId());
+        case 1: {std::stringstream out; out << pp->getDestinationLocation(); return out.str();}
         default: return "";
     }
 }
 
-bool GeoPacketDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
+bool GreedyRoutingPacketDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -284,15 +272,14 @@ bool GeoPacketDescriptor::setFieldAsString(void *object, int field, int i, const
             return basedesc->setFieldAsString(object,field,i,value);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GreedyRoutingPacket *pp = (GreedyRoutingPacket *)object; (void)pp;
     switch (field) {
         case 0: pp->setGeoPacketType(string2long(value)); return true;
-        case 1: pp->setSourceId(string2long(value)); return true;
         default: return false;
     }
 }
 
-const char *GeoPacketDescriptor::getFieldStructName(void *object, int field) const
+const char *GreedyRoutingPacketDescriptor::getFieldStructName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -301,11 +288,12 @@ const char *GeoPacketDescriptor::getFieldStructName(void *object, int field) con
         field -= basedesc->getFieldCount(object);
     }
     switch (field) {
+        case 1: return opp_typename(typeid(NodeLocation_type));
         default: return NULL;
     };
 }
 
-void *GeoPacketDescriptor::getFieldStructPointer(void *object, int field, int i) const
+void *GreedyRoutingPacketDescriptor::getFieldStructPointer(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -313,8 +301,9 @@ void *GeoPacketDescriptor::getFieldStructPointer(void *object, int field, int i)
             return basedesc->getFieldStructPointer(object, field, i);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GreedyRoutingPacket *pp = (GreedyRoutingPacket *)object; (void)pp;
     switch (field) {
+        case 1: return (void *)(&pp->getDestinationLocation()); break;
         default: return NULL;
     }
 }

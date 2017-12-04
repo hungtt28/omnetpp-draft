@@ -52,6 +52,8 @@ class GPSR {
 		for (var i = 0; i < node.neighbor.length; i++) {
 			var neighborAddress = node.neighbor[i];
 			var neighbor = this.network.getNode(neighborAddress);
+			if (neighbor == undefined)
+				continue;
 			var neighborDistance = neighbor.coord.distanceTo(packet.destination);
 			if (neighborDistance < minDistance) {
 				flag = true;
@@ -131,6 +133,8 @@ class GPSR {
 		var planarNeighbors = [];
 		for (var i = 0; i < node.neighbor.length; i++) {
 			var neighborNode = this.network.getNode(node.neighbor[i]);
+			if (neighborNode == undefined)
+				continue;
 			var isCloseNeighbor = true;
 			if (this.planarizationMode == GPSR_RNG_PLANARIZATION) {
 				var neighborDistance = node.coord.distanceTo(neighborNode.coord);
@@ -169,7 +173,7 @@ class GPSR {
 	}
 	
 	getVectorAngle(vector) {
-		var angle = Math.atan2(-vector.y, vector.x);
+		var angle = Math.atan2(vector.y, vector.x);
 		if (angle < 0)
 			angle = angle + 2 * Math.PI;
 		return angle;

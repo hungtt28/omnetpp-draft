@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 4.6 from src/node/communication/routing/geoRouting/GeoPacket.msg.
+// Generated file, do not edit! Created by nedtool 4.6 from src/node/communication/routing/geoRouting/GeoControlPacket.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "GeoPacket_m.h"
+#include "GeoControlPacket_m.h"
 
 USING_NAMESPACE
 
@@ -53,84 +53,62 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 template<typename T>
 inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
 
-EXECUTE_ON_STARTUP(
-    cEnum *e = cEnum::find("GeoPacketDef");
-    if (!e) enums.getInstance()->add(e = new cEnum("GeoPacketDef"));
-    e->insert(GEO_BEACON_PACKET, "GEO_BEACON_PACKET");
-    e->insert(GEO_ROUTING_PACKET, "GEO_ROUTING_PACKET");
-    e->insert(GEO_CONTROL_PACKET, "GEO_CONTROL_PACKET");
-);
+Register_Class(GeoControlPacket);
 
-Register_Class(GeoPacket);
-
-GeoPacket::GeoPacket(const char *name, int kind) : ::RoutingPacket(name,kind)
+GeoControlPacket::GeoControlPacket(const char *name, int kind) : ::GeoPacket(name,kind)
 {
-    this->geoPacketType_var = 0;
-    this->sourceId_var = -1;
+    this->geoPacketType_var = GEO_CONTROL_PACKET;
 }
 
-GeoPacket::GeoPacket(const GeoPacket& other) : ::RoutingPacket(other)
+GeoControlPacket::GeoControlPacket(const GeoControlPacket& other) : ::GeoPacket(other)
 {
     copy(other);
 }
 
-GeoPacket::~GeoPacket()
+GeoControlPacket::~GeoControlPacket()
 {
 }
 
-GeoPacket& GeoPacket::operator=(const GeoPacket& other)
+GeoControlPacket& GeoControlPacket::operator=(const GeoControlPacket& other)
 {
     if (this==&other) return *this;
-    ::RoutingPacket::operator=(other);
+    ::GeoPacket::operator=(other);
     copy(other);
     return *this;
 }
 
-void GeoPacket::copy(const GeoPacket& other)
+void GeoControlPacket::copy(const GeoControlPacket& other)
 {
     this->geoPacketType_var = other.geoPacketType_var;
-    this->sourceId_var = other.sourceId_var;
 }
 
-void GeoPacket::parsimPack(cCommBuffer *b)
+void GeoControlPacket::parsimPack(cCommBuffer *b)
 {
-    ::RoutingPacket::parsimPack(b);
+    ::GeoPacket::parsimPack(b);
     doPacking(b,this->geoPacketType_var);
-    doPacking(b,this->sourceId_var);
 }
 
-void GeoPacket::parsimUnpack(cCommBuffer *b)
+void GeoControlPacket::parsimUnpack(cCommBuffer *b)
 {
-    ::RoutingPacket::parsimUnpack(b);
+    ::GeoPacket::parsimUnpack(b);
     doUnpacking(b,this->geoPacketType_var);
-    doUnpacking(b,this->sourceId_var);
 }
 
-int GeoPacket::getGeoPacketType() const
+int GeoControlPacket::getGeoPacketType() const
 {
     return geoPacketType_var;
 }
 
-void GeoPacket::setGeoPacketType(int geoPacketType)
+void GeoControlPacket::setGeoPacketType(int geoPacketType)
 {
     this->geoPacketType_var = geoPacketType;
 }
 
-int GeoPacket::getSourceId() const
-{
-    return sourceId_var;
-}
-
-void GeoPacket::setSourceId(int sourceId)
-{
-    this->sourceId_var = sourceId;
-}
-
-class GeoPacketDescriptor : public cClassDescriptor
+class GeoControlPacketDescriptor : public cClassDescriptor
 {
   public:
-    GeoPacketDescriptor();
-    virtual ~GeoPacketDescriptor();
+    GeoControlPacketDescriptor();
+    virtual ~GeoControlPacketDescriptor();
 
     virtual bool doesSupport(cObject *obj) const;
     virtual const char *getProperty(const char *propertyname) const;
@@ -149,34 +127,34 @@ class GeoPacketDescriptor : public cClassDescriptor
     virtual void *getFieldStructPointer(void *object, int field, int i) const;
 };
 
-Register_ClassDescriptor(GeoPacketDescriptor);
+Register_ClassDescriptor(GeoControlPacketDescriptor);
 
-GeoPacketDescriptor::GeoPacketDescriptor() : cClassDescriptor("GeoPacket", "RoutingPacket")
+GeoControlPacketDescriptor::GeoControlPacketDescriptor() : cClassDescriptor("GeoControlPacket", "GeoPacket")
 {
 }
 
-GeoPacketDescriptor::~GeoPacketDescriptor()
+GeoControlPacketDescriptor::~GeoControlPacketDescriptor()
 {
 }
 
-bool GeoPacketDescriptor::doesSupport(cObject *obj) const
+bool GeoControlPacketDescriptor::doesSupport(cObject *obj) const
 {
-    return dynamic_cast<GeoPacket *>(obj)!=NULL;
+    return dynamic_cast<GeoControlPacket *>(obj)!=NULL;
 }
 
-const char *GeoPacketDescriptor::getProperty(const char *propertyname) const
+const char *GeoControlPacketDescriptor::getProperty(const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : NULL;
 }
 
-int GeoPacketDescriptor::getFieldCount(void *object) const
+int GeoControlPacketDescriptor::getFieldCount(void *object) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 2+basedesc->getFieldCount(object) : 2;
+    return basedesc ? 1+basedesc->getFieldCount(object) : 1;
 }
 
-unsigned int GeoPacketDescriptor::getFieldTypeFlags(void *object, int field) const
+unsigned int GeoControlPacketDescriptor::getFieldTypeFlags(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -186,12 +164,11 @@ unsigned int GeoPacketDescriptor::getFieldTypeFlags(void *object, int field) con
     }
     static unsigned int fieldTypeFlags[] = {
         FD_ISEDITABLE,
-        FD_ISEDITABLE,
     };
-    return (field>=0 && field<2) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<1) ? fieldTypeFlags[field] : 0;
 }
 
-const char *GeoPacketDescriptor::getFieldName(void *object, int field) const
+const char *GeoControlPacketDescriptor::getFieldName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -201,21 +178,19 @@ const char *GeoPacketDescriptor::getFieldName(void *object, int field) const
     }
     static const char *fieldNames[] = {
         "geoPacketType",
-        "sourceId",
     };
-    return (field>=0 && field<2) ? fieldNames[field] : NULL;
+    return (field>=0 && field<1) ? fieldNames[field] : NULL;
 }
 
-int GeoPacketDescriptor::findField(void *object, const char *fieldName) const
+int GeoControlPacketDescriptor::findField(void *object, const char *fieldName) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount(object) : 0;
     if (fieldName[0]=='g' && strcmp(fieldName, "geoPacketType")==0) return base+0;
-    if (fieldName[0]=='s' && strcmp(fieldName, "sourceId")==0) return base+1;
     return basedesc ? basedesc->findField(object, fieldName) : -1;
 }
 
-const char *GeoPacketDescriptor::getFieldTypeString(void *object, int field) const
+const char *GeoControlPacketDescriptor::getFieldTypeString(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -225,12 +200,11 @@ const char *GeoPacketDescriptor::getFieldTypeString(void *object, int field) con
     }
     static const char *fieldTypeStrings[] = {
         "int",
-        "int",
     };
-    return (field>=0 && field<2) ? fieldTypeStrings[field] : NULL;
+    return (field>=0 && field<1) ? fieldTypeStrings[field] : NULL;
 }
 
-const char *GeoPacketDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
+const char *GeoControlPacketDescriptor::getFieldProperty(void *object, int field, const char *propertyname) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -239,14 +213,11 @@ const char *GeoPacketDescriptor::getFieldProperty(void *object, int field, const
         field -= basedesc->getFieldCount(object);
     }
     switch (field) {
-        case 0:
-            if (!strcmp(propertyname,"enum")) return "GeoPacketDef";
-            return NULL;
         default: return NULL;
     }
 }
 
-int GeoPacketDescriptor::getArraySize(void *object, int field) const
+int GeoControlPacketDescriptor::getArraySize(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -254,13 +225,13 @@ int GeoPacketDescriptor::getArraySize(void *object, int field) const
             return basedesc->getArraySize(object, field);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GeoControlPacket *pp = (GeoControlPacket *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-std::string GeoPacketDescriptor::getFieldAsString(void *object, int field, int i) const
+std::string GeoControlPacketDescriptor::getFieldAsString(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -268,15 +239,14 @@ std::string GeoPacketDescriptor::getFieldAsString(void *object, int field, int i
             return basedesc->getFieldAsString(object,field,i);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GeoControlPacket *pp = (GeoControlPacket *)object; (void)pp;
     switch (field) {
         case 0: return long2string(pp->getGeoPacketType());
-        case 1: return long2string(pp->getSourceId());
         default: return "";
     }
 }
 
-bool GeoPacketDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
+bool GeoControlPacketDescriptor::setFieldAsString(void *object, int field, int i, const char *value) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -284,15 +254,14 @@ bool GeoPacketDescriptor::setFieldAsString(void *object, int field, int i, const
             return basedesc->setFieldAsString(object,field,i,value);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GeoControlPacket *pp = (GeoControlPacket *)object; (void)pp;
     switch (field) {
         case 0: pp->setGeoPacketType(string2long(value)); return true;
-        case 1: pp->setSourceId(string2long(value)); return true;
         default: return false;
     }
 }
 
-const char *GeoPacketDescriptor::getFieldStructName(void *object, int field) const
+const char *GeoControlPacketDescriptor::getFieldStructName(void *object, int field) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -305,7 +274,7 @@ const char *GeoPacketDescriptor::getFieldStructName(void *object, int field) con
     };
 }
 
-void *GeoPacketDescriptor::getFieldStructPointer(void *object, int field, int i) const
+void *GeoControlPacketDescriptor::getFieldStructPointer(void *object, int field, int i) const
 {
     cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -313,7 +282,7 @@ void *GeoPacketDescriptor::getFieldStructPointer(void *object, int field, int i)
             return basedesc->getFieldStructPointer(object, field, i);
         field -= basedesc->getFieldCount(object);
     }
-    GeoPacket *pp = (GeoPacket *)object; (void)pp;
+    GeoControlPacket *pp = (GeoControlPacket *)object; (void)pp;
     switch (field) {
         default: return NULL;
     }
